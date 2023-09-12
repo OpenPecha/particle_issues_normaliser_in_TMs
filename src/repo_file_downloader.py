@@ -3,6 +3,9 @@ from pathlib import Path
 import requests
 from github import Github
 
+# Add your GitHub personal access token here, or import it from a config file
+from config import github_token_access
+
 
 class GitHubFileDownloader:
     def __init__(self, token, repo_owner, repo_name):
@@ -46,7 +49,7 @@ class GitHubFileDownloader:
 
 if __name__ == "__main__":
     # Usage example
-    token = "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"
+    token = github_token_access
     repo_owner = "MonlamAI"
     repo_name = "BO0791"
 
