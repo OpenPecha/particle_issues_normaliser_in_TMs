@@ -23,9 +23,15 @@ class GitHubFileDownloader:
         # Get the list of contents in the repository root
         contents = repo.get_contents("")
 
+        target_file_suffix = ".txt"
+        # TM repo names start with "TM", there would two .txt files in the repo,
+        # one for the tibetan language and one for the english language
+        if self.repo_name.startswith("TM"):
+            target_file_suffix = "bo.txt"
+
         txt_file_name = ""
         for content_file in contents:
-            if content_file.name.endswith(".txt"):
+            if content_file.name.endswith(target_file_suffix):
                 txt_file_name = content_file.name
 
         # Get the file contents
