@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from antxAnnotationTransfer import antxAnnotationTransfer, remove_newlines
 from bo_sentence_tokenizer_pipeline import bo_sent_tokenizer_pipeline
 from config import github_token_access
 from repo_file_downloader import GitHubFileDownloader, download_file_with_url
@@ -23,13 +24,19 @@ def pipeline(repo_names_list):
         download_url = downloader.get_txt_file_download_url_from_repo()
         download_file_with_url(download_url, tm_repo_name + ".txt")
 
-        # setence tokenizing the bo.txt content
+        # sentence tokenizing the bo.txt content
         bo_file_path = f"{bo_repo_name}.txt"
         bo_file_content = Path(bo_file_path).read_text(encoding="utf-8")
-        bo_file_content_segmented = bo_sent_tokenizer_pipeline(bo_file_content)
-        bo_segmented_file_path = f"{bo_repo_name}_segmented.txt"
-        with open(bo_segmented_file_path, "w", encoding="utf-8") as file:
-            file.write(bo_file_content_segmented)
+        bo_file_content_tokenized = bo_sent_tokenizer_pipeline(bo_file_content)
+
+        # transfering the annotation
+        source_text = Path(f"{tm_repo_name}.txt").read_text(encoding="utf-8")
+        target_text = bo_file_content_tokenized
+        target_text = remove_newlines(target_text)
+        AnnotatedText = antxAnnotationTransfer(source_text, target_text)
+        with open(f"{tm_repo_name}_cleaned.txt", "w") as file:
+            for AnnotatedLine in AnnotatedText.splitlines():
+                file.write(f"{AnnotatedLine.strip()}\n")
 
 
 if __name__ == "__main__":
