@@ -24,14 +24,14 @@ def pipeline(repo_names_list):
         download_file_with_url(download_url, tm_repo_name + ".txt")
 
         # setence tokenizing the bo.txt content
-        bo_file_path = f"./{bo_repo_name}.txt"
+        bo_file_path = f"{bo_repo_name}.txt"
         bo_file_content = Path(bo_file_path).read_text(encoding="utf-8")
         bo_file_content_segmented = bo_sent_tokenizer_pipeline(bo_file_content)
-        bo_segmented_file_path = f"./{bo_repo_name}_segmented.txt"
+        bo_segmented_file_path = f"{bo_repo_name}_segmented.txt"
         with open(bo_segmented_file_path, "w", encoding="utf-8") as file:
             file.write(bo_file_content_segmented)
 
 
 if __name__ == "__main__":
-    repo_names_list = ["BO0791"]
+    repo_names_list = ["BO0790"]
     pipeline(repo_names_list)

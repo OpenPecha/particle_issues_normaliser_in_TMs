@@ -60,7 +60,7 @@ if __name__ == "__main__":
     # Usage example
     token = github_token_access
     repo_owner = "MonlamAI"
-    repo_name = "BO0791"
+    repo_name = "BO0790"
 
     downloader = GitHubFileDownloader(token, repo_owner, repo_name)
     download_url = downloader.get_txt_file_download_url_from_repo()
