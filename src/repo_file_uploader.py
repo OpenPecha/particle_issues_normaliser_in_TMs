@@ -1,10 +1,9 @@
-from pathlib import Path
-
 import requests
 from github import Github
 from retrying import retry
 
 from config import github_token_access
+from path_definations import TM_folder_path
 
 
 class GitHubFileUploader:
@@ -59,6 +58,6 @@ if __name__ == "__main__":
     repo_name = "test_repo"
 
     uploader = GitHubFileUploader(token, repo_owner, repo_name)
-    file_path = "TM0790-bo.txt"
-    file_data = Path("TM0790_cleaned.txt").read_text(encoding="utf-8")
-    uploader.upload_txt_file(file_path, file_data)
+    github_repo_file_path = "TM0790-bo.txt"
+    file_data = (TM_folder_path / "TM0790_cleaned.txt").read_text(encoding="utf-8")
+    uploader.upload_txt_file(github_repo_file_path, file_data)
