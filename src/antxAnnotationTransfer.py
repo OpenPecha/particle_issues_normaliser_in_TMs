@@ -1,7 +1,8 @@
 import re
-from pathlib import Path
 
 from antx import transfer
+
+from path_definations import BO_folder_path, TM_folder_path
 
 
 def antxAnnotationTransfer(source_text, target_text):
@@ -23,10 +24,10 @@ def remove_newlines(text):
 
 
 if __name__ == "__main__":
-    source_text = Path("./TM0790.txt").read_text(encoding="utf-8")
-    target_text = Path("./BO0790_segmented.txt").read_text(encoding="utf-8")
+    source_text = (TM_folder_path / "TM0790.txt").read_text(encoding="utf-8")
+    target_text = (BO_folder_path / "BO0790_tokenized.txt").read_text(encoding="utf-8")
     target_text = remove_newlines(target_text)
     AnnotatedText = antxAnnotationTransfer(source_text, target_text)
-    with open("./new_TM0790.txt", "w", encoding="utf-8") as file:
+    with open(TM_folder_path / "TM0790_cleaned.txt", "w", encoding="utf-8") as file:
         for AnnotatedLine in AnnotatedText.splitlines():
             file.write(f"{AnnotatedLine.strip()}\n")
