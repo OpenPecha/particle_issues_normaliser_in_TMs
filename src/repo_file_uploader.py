@@ -1,6 +1,8 @@
 from pathlib import Path
 
+import requests
 from github import Github
+from retrying import retry
 
 from config import github_token_access
 
@@ -22,6 +24,13 @@ class GitHubFileUploader:
         except Exception:
             return None  # File doesn't exist, so current SHA is None
 
+    @retry(
+        stop_max_attempt_number=3,  # Maximum number of retries
+        wait_fixed=2000,  # Delay between retries in milliseconds (2 seconds)
+        retry_on_exception=lambda x: isinstance(
+            x, requests.exceptions.RequestException
+        ),  # Retry on network errors
+    )
     def upload_txt_file(self, file_path, file_data):
         g = Github(self.token)
         # Get the repository

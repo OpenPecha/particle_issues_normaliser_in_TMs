@@ -2,7 +2,7 @@ from pathlib import Path
 
 import requests
 from github import Github
-from retrying import retry  # Import the retry function
+from retrying import retry
 
 # Add your GitHub personal access token here, or import it from a config file
 from config import github_token_access
