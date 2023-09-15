@@ -4,13 +4,15 @@ from antxAnnotationTransfer import antxAnnotationTransfer, remove_newlines
 from bo_sentence_tokenizer_pipeline import bo_sent_tokenizer_pipeline
 from config import github_token_access
 from repo_file_downloader import GitHubFileDownloader, download_file_with_url
+from repo_file_uploader import GitHubFileUploader
+
+token = github_token_access
 
 
 def pipeline(repo_names_list):
     repo_owner = "MonlamAI"
 
     for bo_repo_name in repo_names_list:
-        token = github_token_access
 
         # downloading bo.txt file
         downloader = GitHubFileDownloader(token, repo_owner, bo_repo_name)
@@ -34,9 +36,18 @@ def pipeline(repo_names_list):
         target_text = bo_file_content_tokenized
         target_text = remove_newlines(target_text)
         AnnotatedText = antxAnnotationTransfer(source_text, target_text)
-        with open(f"{tm_repo_name}_cleaned.txt", "w") as file:
+        new_annotated_file_name = f"{tm_repo_name}_cleaned.txt"
+        with open(new_annotated_file_name, "w") as file:
             for AnnotatedLine in AnnotatedText.splitlines():
                 file.write(f"{AnnotatedLine.strip()}\n")
+
+        # Uploading the new cleaned file
+        repo_owner = "tenzin3"
+        repo_name = "test_repo"
+        uploader = GitHubFileUploader(token, repo_owner, repo_name)
+        file_path = f"TM{translation_memory_ID}-bo.txt"
+        file_data = Path(new_annotated_file_name).read_text(encoding="utf-8")
+        uploader.upload_txt_file(file_path, file_data)
 
 
 if __name__ == "__main__":

@@ -2,6 +2,7 @@ from pathlib import Path
 
 import requests
 from github import Github
+from retrying import retry  # Import the retry function
 
 # Add your GitHub personal access token here, or import it from a config file
 from config import github_token_access
@@ -39,6 +40,13 @@ class GitHubFileDownloader:
         return file_contents.download_url
 
 
+@retry(
+    stop_max_attempt_number=3,  # Maximum number of retries
+    wait_fixed=2000,  # Delay between retries in milliseconds (2 seconds)
+    retry_on_exception=lambda x: isinstance(
+        x, requests.exceptions.RequestException
+    ),  # Retry on network errors
+)
 def download_file_with_url(
     download_url, new_downloaded_file_name, destination_folder="."
 ):

@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 config.py
+github_api_rate_limit.py
 
 # C extensions
 *.so
