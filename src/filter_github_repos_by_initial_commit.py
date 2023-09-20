@@ -64,6 +64,13 @@ def filter_tm_files_by_initial_commit_date_range(
                     print(
                         f"[{tm_counter}/{TM_FILE_COUNT}]: Repo {tm_name} added to filtered list"
                     )
+                else:
+                    print(
+                        f"[{tm_counter}/{TM_FILE_COUNT}]: Repo {tm_name} not within the date range"
+                    )
+                    error_buffer.write(
+                        f"{tm_name}: initial commit not within data range {START_DATE} and {END_DATE}\n"
+                    )
             except Exception as e:
                 print(
                     f"[{tm_counter}/{TM_FILE_COUNT}]: Repo {tm_name} Error Occured : {str(e)}"
@@ -73,7 +80,7 @@ def filter_tm_files_by_initial_commit_date_range(
                 continue
             tm_counter += 1
             # Periodically flush the output and error buffers to their respective files
-            if len(tm_names_filtered) % 100 == 0:
+            if len(tm_names_filtered) % 20 == 0:
                 output_file.write(output_buffer.getvalue())
                 error_file.write(error_buffer.getvalue())
                 output_buffer.close()
@@ -127,8 +134,8 @@ if __name__ == "__main__":
     bo_names = filter_bo_repo_names_from_file(bo_repos_file_path)
     tm_names = get_tm_repo_names_from_bo_names(bo_names)
 
-    filtered_file_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "filtered_tm_names.txt"
-    error_file_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "filtered_error_tm_names.txt"
+    filtered_file_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "filtered_TMs.txt"
+    error_file_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "filtered_error_TMs.txt"
     tm_names_filtered = filter_tm_files_by_initial_commit_date_range(
         tm_names, filtered_file_path, error_file_path
     )
