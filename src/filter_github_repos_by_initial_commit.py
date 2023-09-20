@@ -47,6 +47,18 @@ class GitHubRepoFilter:
                 txt_file_name = content_file.name
         return txt_file_name
 
+    def get_initial_commit_date(self, file_name):
+        g = Github(self.token)
+        repo = g.get_repo(f"{self.repo_owner}/{self.repo_name}")
+        commits = repo.get_commits(path=file_name)
+
+        if commits:
+            commits_count = len(list(commits))
+            initial_commit_date = commits[commits_count - 1].commit.author.date
+            return initial_commit_date
+        else:
+            return None
+
 
 if __name__ == "__main__":
     bo_repos_file_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "few_BO_EN_list.txt"
@@ -58,4 +70,5 @@ if __name__ == "__main__":
     repo_filter = GitHubRepoFilter(token, repo_owner, repo_name)
     file_names = repo_filter.get_file_names_in_repo()
     txt_file_name = repo_filter.get_bo_txt_file_from_file_names(file_names)
-    print(txt_file_name)
+    initial_commit_date = repo_filter.get_initial_commit_date(txt_file_name)
+    print(initial_commit_date)
