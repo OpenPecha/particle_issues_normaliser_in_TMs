@@ -13,6 +13,7 @@ token = GITHUB_TOKEN
 # These are the dates where TM files were sentence tokenized wrongly
 START_DATE = datetime(2023, 5, 3)
 END_DATE = datetime(2023, 7, 5)
+REPO_OWNER = "MonlamAI"
 
 
 def filter_bo_repo_names_from_file(file_path) -> List[str]:
@@ -28,6 +29,25 @@ def get_tm_repo_names_from_bo_names(bo_names: List[str]) -> List[str]:
     return tm_names
 
 
+def filter_tm_files_by_initial_commit_date_range(tm_names: List[str]) -> List[str]:
+    tm_names_filtered = []
+    for tm_name in tm_names:
+        try:
+            repo_filter = GitHubRepoFilter(token, REPO_OWNER, tm_name)
+            file_names = repo_filter.get_file_names_in_repo()
+            bo_txt_file_name = repo_filter.get_bo_txt_file_from_file_names(file_names)
+            if bo_txt_file_name == "":
+                continue
+            initial_commit_date = repo_filter.get_initial_commit_date(bo_txt_file_name)
+            if initial_commit_date and START_DATE <= initial_commit_date <= END_DATE:
+                tm_names_filtered.append(tm_name)
+        except Exception as e:
+            print(f"Error processing {tm_name}: {str(e)}")
+            continue
+
+    return tm_names_filtered
+
+
 class GitHubRepoFilter:
     def __init__(self, token, repo_owner, repo_name):
         self.token = token
@@ -41,11 +61,11 @@ class GitHubRepoFilter:
 
     def get_bo_txt_file_from_file_names(self, file_names: List) -> str:
         target_file_suffix = "bo.txt"
-        txt_file_name = ""
+        bo_txt_file_name = ""
         for content_file in file_names:
             if content_file.name.endswith(target_file_suffix):
-                txt_file_name = content_file.name
-        return txt_file_name
+                bo_txt_file_name = content_file.name
+        return bo_txt_file_name
 
     def get_initial_commit_date(self, file_name):
         g = Github(self.token)
@@ -64,11 +84,5 @@ if __name__ == "__main__":
     bo_repos_file_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "few_BO_EN_list.txt"
     bo_names = filter_bo_repo_names_from_file(bo_repos_file_path)
     tm_names = get_tm_repo_names_from_bo_names(bo_names)
-
-    repo_owner = "MonlamAI"
-    repo_name = "TM0701"
-    repo_filter = GitHubRepoFilter(token, repo_owner, repo_name)
-    file_names = repo_filter.get_file_names_in_repo()
-    txt_file_name = repo_filter.get_bo_txt_file_from_file_names(file_names)
-    initial_commit_date = repo_filter.get_initial_commit_date(txt_file_name)
-    print(initial_commit_date)
+    tm_names_filtered = filter_tm_files_by_initial_commit_date_range(tm_names)
+    print(tm_names_filtered)
