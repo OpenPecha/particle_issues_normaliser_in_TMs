@@ -1,5 +1,6 @@
 import re
 from datetime import datetime
+from io import StringIO
 from pathlib import Path
 from typing import List
 
@@ -30,12 +31,16 @@ def get_tm_repo_names_from_bo_names(bo_names: List[str]) -> List[str]:
 
 
 def filter_tm_files_by_initial_commit_date_range(
-    tm_names: List[str], output_file_path: Path
+    tm_names: List[str], output_file_path: Path, error_file_path: Path
 ) -> List[str]:
     tm_names_filtered = []
 
-    # Open the output file for writing
-    with open(output_file_path, "w") as output_file:
+    with open(output_file_path, "w") as output_file, open(
+        error_file_path, "w"
+    ) as error_file:
+        output_buffer = StringIO()
+        error_buffer = StringIO()
+
         for tm_name in tm_names:
             try:
                 repo_filter = GitHubRepoFilter(token, REPO_OWNER, tm_name)
@@ -53,10 +58,26 @@ def filter_tm_files_by_initial_commit_date_range(
                     and START_DATE <= initial_commit_date <= END_DATE
                 ):
                     tm_names_filtered.append(tm_name)
-                    output_file.write(f"{tm_name}\n")
+                    output_buffer.write(f"{tm_name}\n")
             except Exception as e:
-                print(f"Error processing {tm_name}: {str(e)}")
+                # print(f"Error processing {tm_name}: {str(e)}")
+                error_buffer.write(f"{tm_name} Error processing : {str(e)}\n")
                 continue
+
+            # Periodically flush the output and error buffers to their respective files
+            if len(tm_names_filtered) % 100 == 0:
+                output_file.write(output_buffer.getvalue())
+                error_file.write(error_buffer.getvalue())
+                output_buffer.close()
+                error_buffer.close()
+                output_buffer = StringIO()
+                error_buffer = StringIO()
+
+        # Flush any remaining data in the output and error buffers to their respective files
+        output_file.write(output_buffer.getvalue())
+        error_file.write(error_buffer.getvalue())
+        output_buffer.close()
+        error_buffer.close()
 
     return tm_names_filtered
 
@@ -98,10 +119,9 @@ if __name__ == "__main__":
     bo_names = filter_bo_repo_names_from_file(bo_repos_file_path)
     tm_names = get_tm_repo_names_from_bo_names(bo_names)
 
-    filtered_tm_output_file_path = (
-        Path(PARENT_DIR / DATA_FOLDER_DIR) / "filtered_tm_names.txt"
-    )
+    filtered_file_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "filtered_tm_names.txt"
+    error_file_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "filtered_error_tm_names.txt"
     tm_names_filtered = filter_tm_files_by_initial_commit_date_range(
-        tm_names, filtered_tm_output_file_path
+        tm_names, filtered_file_path, error_file_path
     )
     print(tm_names_filtered)
