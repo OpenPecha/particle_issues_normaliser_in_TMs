@@ -19,13 +19,13 @@ REPO_OWNER = "MonlamAI"
 
 def filter_bo_repo_names_from_file(file_path) -> List[str]:
     file_content = file_path.read_text(encoding="utf-8")
-    BO_PATTERN = r"- ([a-zA-Z\d-]*)"  # Regex to select the bo repo names
+    BO_PATTERN = r"-\s([a-zA-Z\d_-]*)"  # Regex to select the bo repo names
     bo_names = re.findall(BO_PATTERN, file_content)
     return bo_names
 
 
 def get_tm_repo_names_from_bo_names(bo_names: List[str]) -> List[str]:
-    bo_ids = [bo_name[2:6] for bo_name in bo_names]
+    bo_ids = [bo_name[2:] for bo_name in bo_names]
     tm_names = [f"TM{bo_id}" for bo_id in bo_ids]
     return tm_names
 
@@ -130,13 +130,16 @@ class GitHubRepoFilter:
 
 
 if __name__ == "__main__":
-    bo_repos_file_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "few_BO_EN_list.txt"
+    bo_repos_file_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "all_BO_EN_list.txt"
     bo_names = filter_bo_repo_names_from_file(bo_repos_file_path)
     tm_names = get_tm_repo_names_from_bo_names(bo_names)
 
-    filtered_file_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "filtered_TMs.txt"
-    error_file_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "filtered_error_TMs.txt"
+    tm_file_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "all_TMs_list.txt"
+    tm_file_path.write_text("\n".join(tm_names), encoding="utf-8")
+
+    filtered_TM_files_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "filtered_TMs.txt"
+    error_TM_files_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "filtered_error_TMs.txt"
     tm_names_filtered = filter_tm_files_by_initial_commit_date_range(
-        tm_names, filtered_file_path, error_file_path
+        tm_names, filtered_TM_files_path, error_TM_files_path
     )
     print(tm_names_filtered)
