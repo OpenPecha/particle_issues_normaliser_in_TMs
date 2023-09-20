@@ -53,7 +53,7 @@ def pipeline(repo_names_list):
         repo_name = "test_repo"
         uploader = GitHubFileUploader(token, repo_owner, repo_name)
         file_path = f"TM{translation_memory_ID}-bo.txt"
-        file_data = Path(new_annotated_file_name).read_text(encoding="utf-8")
+        file_data = Path(new_annotated_file_path).read_text(encoding="utf-8")
         uploader.upload_txt_file(file_path, file_data)
 
 
