@@ -2,8 +2,8 @@ import requests
 from github import Github
 from retrying import retry
 
-from config import github_token_access
 from path_definations import TM_folder_path
+from settings import GITHUB_TOKEN
 
 
 class GitHubFileUploader:
@@ -53,7 +53,7 @@ class GitHubFileUploader:
 
 if __name__ == "__main__":
     # Usage example
-    token = github_token_access
+    token = GITHUB_TOKEN
     repo_owner = "tenzin3"
     repo_name = "test_repo"
 

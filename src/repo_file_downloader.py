@@ -4,9 +4,8 @@ import requests
 from github import Github
 from retrying import retry
 
-# Add your GitHub personal access token here, or import it from a config file
-from config import github_token_access
 from path_definations import BO_folder_path
+from settings import GITHUB_TOKEN
 
 
 class GitHubFileDownloader:
@@ -67,7 +66,7 @@ def download_file_with_url(
 
 if __name__ == "__main__":
     # Usage example
-    token = github_token_access
+    token = GITHUB_TOKEN
     repo_owner = "MonlamAI"
     repo_name = "BO0790"
 

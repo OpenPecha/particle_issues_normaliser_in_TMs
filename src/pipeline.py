@@ -2,12 +2,12 @@ from pathlib import Path
 
 from antx_annotation_transfer import antx_annotation_transfer, remove_newlines
 from bo_sentence_tokenizer_pipeline import bo_sent_tokenizer_pipeline
-from config import github_token_access
 from path_definations import BO_folder_path, TM_folder_path
 from repo_file_downloader import GitHubFileDownloader, download_file_with_url
 from repo_file_uploader import GitHubFileUploader
+from settings import GITHUB_TOKEN
 
-token = github_token_access
+token = GITHUB_TOKEN
 
 
 def pipeline(repo_names_list):
