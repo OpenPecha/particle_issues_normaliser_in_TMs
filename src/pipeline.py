@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from antxAnnotationTransfer import antxAnnotationTransfer, remove_newlines
+from antx_annotation_transfer import antxAnnotationTransfer, remove_newlines
 from bo_sentence_tokenizer_pipeline import bo_sent_tokenizer_pipeline
 from config import github_token_access
 from path_definations import BO_folder_path, TM_folder_path
