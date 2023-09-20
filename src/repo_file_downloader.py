@@ -4,7 +4,7 @@ import requests
 from github import Github
 from retrying import retry
 
-from path_definations import BO_folder_path
+from config import BO_FOLDER_DIR
 from settings import GITHUB_TOKEN
 
 
@@ -72,4 +72,4 @@ if __name__ == "__main__":
 
     downloader = GitHubFileDownloader(token, repo_owner, repo_name)
     download_url = downloader.get_txt_file_download_url_from_repo()
-    download_file_with_url(download_url, repo_name + ".txt", BO_folder_path)
+    download_file_with_url(download_url, repo_name + ".txt", BO_FOLDER_DIR)
