@@ -40,7 +40,8 @@ def filter_tm_files_by_initial_commit_date_range(
     ) as error_file:
         output_buffer = StringIO()
         error_buffer = StringIO()
-
+        TM_FILE_COUNT = len(tm_names)
+        tm_counter = 1
         for tm_name in tm_names:
             try:
                 repo_filter = GitHubRepoFilter(token, REPO_OWNER, tm_name)
@@ -53,17 +54,24 @@ def filter_tm_files_by_initial_commit_date_range(
                 initial_commit_date = repo_filter.get_initial_commit_date(
                     bo_txt_file_name
                 )
+
                 if (
                     initial_commit_date
                     and START_DATE <= initial_commit_date <= END_DATE
                 ):
                     tm_names_filtered.append(tm_name)
                     output_buffer.write(f"{tm_name}\n")
+                    print(
+                        f"[{tm_counter}/{TM_FILE_COUNT}]: Repo {tm_name} added to filtered list"
+                    )
             except Exception as e:
-                # print(f"Error processing {tm_name}: {str(e)}")
-                error_buffer.write(f"{tm_name} Error processing : {str(e)}\n")
+                print(
+                    f"[{tm_counter}/{TM_FILE_COUNT}]: Repo {tm_name} Error Occured : {str(e)}"
+                )
+                error_buffer.write(f"{tm_name} Error Occured : {str(e)}\n")
+                tm_counter += 1
                 continue
-
+            tm_counter += 1
             # Periodically flush the output and error buffers to their respective files
             if len(tm_names_filtered) % 100 == 0:
                 output_file.write(output_buffer.getvalue())
