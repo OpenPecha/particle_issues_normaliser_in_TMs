@@ -34,15 +34,15 @@ class GitHubRepoFilter:
         self.repo_owner = repo_owner
         self.repo_name = repo_name
 
-    def get_repositories(self):
+    def get_file_names_in_repo(self) -> List[str]:
         g = Github(self.token)
         repo = g.get_repo(f"{self.repo_owner}/{self.repo_name}")
         return repo.get_contents("")
 
-    def get_bo_txt_file_from_repositories(self, repo_names):
+    def get_bo_txt_file_from_file_names(self, file_names: List) -> str:
         target_file_suffix = "bo.txt"
         txt_file_name = ""
-        for content_file in repo_names:
+        for content_file in file_names:
             if content_file.name.endswith(target_file_suffix):
                 txt_file_name = content_file.name
         return txt_file_name
@@ -56,6 +56,6 @@ if __name__ == "__main__":
     repo_owner = "MonlamAI"
     repo_name = "TM0701"
     repo_filter = GitHubRepoFilter(token, repo_owner, repo_name)
-    repo_names = repo_filter.get_repositories()
-    txt_file_name = repo_filter.get_bo_txt_file_from_repositories(repo_names)
+    file_names = repo_filter.get_file_names_in_repo()
+    txt_file_name = repo_filter.get_bo_txt_file_from_file_names(file_names)
     print(txt_file_name)
