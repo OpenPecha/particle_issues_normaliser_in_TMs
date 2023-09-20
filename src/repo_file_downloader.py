@@ -6,6 +6,7 @@ from retrying import retry
 
 # Add your GitHub personal access token here, or import it from a config file
 from config import github_token_access
+from path_definations import BO_folder_path
 
 
 class GitHubFileDownloader:
@@ -72,4 +73,4 @@ if __name__ == "__main__":
 
     downloader = GitHubFileDownloader(token, repo_owner, repo_name)
     download_url = downloader.get_txt_file_download_url_from_repo()
-    download_file_with_url(download_url, repo_name + ".txt")
+    download_file_with_url(download_url, repo_name + ".txt", BO_folder_path)
