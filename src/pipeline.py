@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from antx_annotation_transfer import antxAnnotationTransfer, remove_newlines
+from antx_annotation_transfer import antx_annotation_transfer, remove_newlines
 from bo_sentence_tokenizer_pipeline import bo_sent_tokenizer_pipeline
 from config import github_token_access
 from path_definations import BO_folder_path, TM_folder_path
@@ -41,7 +41,7 @@ def pipeline(repo_names_list):
         )
         target_text = bo_file_content_tokenized
         target_text = remove_newlines(target_text)
-        AnnotatedText = antxAnnotationTransfer(source_text, target_text)
+        AnnotatedText = antx_annotation_transfer(source_text, target_text)
         new_annotated_file_name = f"{tm_repo_name}_cleaned.txt"
         new_annotated_file_path = TM_folder_path / new_annotated_file_name
         with open(new_annotated_file_path, "w") as file:

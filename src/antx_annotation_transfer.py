@@ -5,15 +5,15 @@ from antx import transfer
 from path_definations import BO_folder_path, TM_folder_path
 
 
-def antxAnnotationTransfer(source_text, target_text):
+def antx_annotation_transfer(source_text, target_text):
     annotations = [
         ["One", r"(1️⃣)"],
         ["Two", r"(2️⃣)"],
         ["Three", r"(3️⃣)"],
         ["new_line", r"(\n)"],
     ]
-    AnnotatedText = transfer(source_text, annotations, target_text, output="txt")
-    return AnnotatedText
+    annotated_text = transfer(source_text, annotations, target_text, output="txt")
+    return annotated_text
 
 
 def remove_newlines(text):
@@ -27,7 +27,7 @@ if __name__ == "__main__":
     source_text = (TM_folder_path / "TM0790.txt").read_text(encoding="utf-8")
     target_text = (BO_folder_path / "BO0790_tokenized.txt").read_text(encoding="utf-8")
     target_text = remove_newlines(target_text)
-    AnnotatedText = antxAnnotationTransfer(source_text, target_text)
+    annotated_text = antx_annotation_transfer(source_text, target_text)
     with open(TM_folder_path / "TM0790_cleaned.txt", "w", encoding="utf-8") as file:
-        for AnnotatedLine in AnnotatedText.splitlines():
-            file.write(f"{AnnotatedLine.strip()}\n")
+        for annotated_line in annotated_text.splitlines():
+            file.write(f"{annotated_line.strip()}\n")
