@@ -29,21 +29,34 @@ def get_tm_repo_names_from_bo_names(bo_names: List[str]) -> List[str]:
     return tm_names
 
 
-def filter_tm_files_by_initial_commit_date_range(tm_names: List[str]) -> List[str]:
+def filter_tm_files_by_initial_commit_date_range(
+    tm_names: List[str], output_file_path: Path
+) -> List[str]:
     tm_names_filtered = []
-    for tm_name in tm_names:
-        try:
-            repo_filter = GitHubRepoFilter(token, REPO_OWNER, tm_name)
-            file_names = repo_filter.get_file_names_in_repo()
-            bo_txt_file_name = repo_filter.get_bo_txt_file_from_file_names(file_names)
-            if bo_txt_file_name == "":
+
+    # Open the output file for writing
+    with open(output_file_path, "w") as output_file:
+        for tm_name in tm_names:
+            try:
+                repo_filter = GitHubRepoFilter(token, REPO_OWNER, tm_name)
+                file_names = repo_filter.get_file_names_in_repo()
+                bo_txt_file_name = repo_filter.get_bo_txt_file_from_file_names(
+                    file_names
+                )
+                if bo_txt_file_name == "":
+                    continue
+                initial_commit_date = repo_filter.get_initial_commit_date(
+                    bo_txt_file_name
+                )
+                if (
+                    initial_commit_date
+                    and START_DATE <= initial_commit_date <= END_DATE
+                ):
+                    tm_names_filtered.append(tm_name)
+                    output_file.write(f"{tm_name}\n")
+            except Exception as e:
+                print(f"Error processing {tm_name}: {str(e)}")
                 continue
-            initial_commit_date = repo_filter.get_initial_commit_date(bo_txt_file_name)
-            if initial_commit_date and START_DATE <= initial_commit_date <= END_DATE:
-                tm_names_filtered.append(tm_name)
-        except Exception as e:
-            print(f"Error processing {tm_name}: {str(e)}")
-            continue
 
     return tm_names_filtered
 
@@ -84,5 +97,11 @@ if __name__ == "__main__":
     bo_repos_file_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "few_BO_EN_list.txt"
     bo_names = filter_bo_repo_names_from_file(bo_repos_file_path)
     tm_names = get_tm_repo_names_from_bo_names(bo_names)
-    tm_names_filtered = filter_tm_files_by_initial_commit_date_range(tm_names)
+
+    filtered_tm_output_file_path = (
+        Path(PARENT_DIR / DATA_FOLDER_DIR) / "filtered_tm_names.txt"
+    )
+    tm_names_filtered = filter_tm_files_by_initial_commit_date_range(
+        tm_names, filtered_tm_output_file_path
+    )
     print(tm_names_filtered)
