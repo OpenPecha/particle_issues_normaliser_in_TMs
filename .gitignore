@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 config.py
 github_api_rate_limit.py
+settings.py
 
 # C extensions
 *.so

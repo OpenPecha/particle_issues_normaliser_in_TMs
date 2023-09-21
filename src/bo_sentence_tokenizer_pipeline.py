@@ -1,4 +1,4 @@
-from openpechamltools.src.op_mt_tools.tokenizers import bo_sent_tokenizer
+from op_mt_tools.tokenizers import bo_sent_tokenizer
 
 
 def bo_sent_tokenizer_pipeline(bo_string):
