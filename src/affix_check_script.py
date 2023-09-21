@@ -5,11 +5,8 @@ from config import AFFIX_ISSUES, FILTERED_TM_FOLDER_DIR
 
 
 def check_affix_issues(
-    text: str, affix_issues: List[str] = AFFIX_ISSUES
+    text, affix_issues: List = AFFIX_ISSUES
 ) -> Tuple[bool, List[str]]:
-    """
-    Check if the affix is in the TMs.
-    """
     # Check if the affix is in the TMs.
     found_affix_issues = []
     for affix_issue in affix_issues:
@@ -22,9 +19,6 @@ def check_affix_issues(
 
 
 def detect_affix_issues_in_folder(folder_path: Path):
-    """
-    Detect affix issues in the TMs.
-    """
     all_file_content = ""
 
     txt_files = folder_path.glob("*.txt")
@@ -37,9 +31,31 @@ def detect_affix_issues_in_folder(folder_path: Path):
     return has_affix_issues, found_affix_issues
 
 
+def identify_files_with_affix_issues(folder_path, affix_issues: List[str]) -> List[str]:
+    txt_files = folder_path.glob("*.txt")
+    files_with_issues = []
+    for txt_file in txt_files:
+        file_content = txt_file.read_text(encoding="utf-8")
+        for issue in affix_issues:
+            if issue in file_content:
+                files_with_issues.append(txt_file.name)
+                break
+
+    return files_with_issues
+
+
+def count_files_in_folder(folder_path: Path) -> int:
+    return len([item for item in folder_path.iterdir() if item.is_file()])
+
+
 if __name__ == "__main__":
     has_affix_issues, found_affix_issues = detect_affix_issues_in_folder(
         FILTERED_TM_FOLDER_DIR
     )
-    print(has_affix_issues)
-    print(found_affix_issues)
+    files_with_issues = identify_files_with_affix_issues(
+        FILTERED_TM_FOLDER_DIR, found_affix_issues
+    )
+
+    files_count = count_files_in_folder(FILTERED_TM_FOLDER_DIR)
+    print(f"No of filtered TM files: {files_count}")
+    print(f"No of filtered TM files with issues: {len(files_with_issues)}")
