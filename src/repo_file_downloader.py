@@ -1,11 +1,15 @@
 from pathlib import Path
+from typing import List
 
 import requests
 from github import Github
 from retrying import retry
 
-from config import BO_FOLDER_DIR
+from config import DATA_FOLDER_DIR, PARENT_DIR
 from settings import GITHUB_TOKEN
+
+TOKEN = GITHUB_TOKEN
+REPO_OWNER = "MonlamAI"
 
 
 class GitHubFileDownloader:
@@ -64,12 +68,41 @@ def download_file_with_url(
         print(f"Failed to download file. Status code: {response.status_code}")
 
 
+def download_tm_and_bo_files_from_github(
+    tm_files: List[str], tm_output_file_path, bo_output_file_path
+):
+    for tm_file in tm_files:
+        # Downloading TM files
+        downloader = GitHubFileDownloader(TOKEN, REPO_OWNER, tm_file)
+        download_url = downloader.get_txt_file_download_url_from_repo()
+        download_file_with_url(download_url, tm_file + ".txt", tm_output_file_path)
+
+        # Downloading the corresponding BO files
+        bo_file = f"BO{tm_file[2:]}"
+        bo_repo_name = bo_file
+        # For TM file like TM0701-v4,corresponding BO file is BO0701
+        if "-" in bo_file:
+            bo_repo_name = bo_file[: bo_file.index("-")]
+        downloader = GitHubFileDownloader(TOKEN, REPO_OWNER, bo_repo_name)
+        download_url = downloader.get_txt_file_download_url_from_repo()
+        download_file_with_url(download_url, bo_file + ".txt", bo_output_file_path)
+
+
 if __name__ == "__main__":
     # Usage example
-    token = GITHUB_TOKEN
-    repo_owner = "MonlamAI"
-    repo_name = "BO0790"
+    tm_files = (
+        Path(PARENT_DIR / DATA_FOLDER_DIR / "filtered_TMs.txt").read_text().split("\n")
+    )
+    filtered_tm_files_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "filtered_TM_files"
+    filtered_bo_files_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "filtered_BO_files"
+    tm_files = [element for element in tm_files if element != ""]
+    tm_files = tm_files[220:]
 
-    downloader = GitHubFileDownloader(token, repo_owner, repo_name)
-    download_url = downloader.get_txt_file_download_url_from_repo()
-    download_file_with_url(download_url, repo_name + ".txt", BO_FOLDER_DIR)
+    download_tm_and_bo_files_from_github(
+        tm_files, filtered_tm_files_path, filtered_bo_files_path
+    )
+
+    # repo_name = "BO0790"
+    # downloader = GitHubFileDownloader(token, repo_owner, repo_name)
+    # download_url = downloader.get_txt_file_download_url_from_repo()
+    # download_file_with_url(download_url, repo_name + ".txt", BO_FOLDER_DIR)
