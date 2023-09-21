@@ -13,6 +13,9 @@ FILTERED_TOKENIZED_BO_FOLDER_DIR = (
 FILTERED_TOKENIZED_TM_FOLDER_DIR = (
     PARENT_DIR / DATA_FOLDER_DIR / "filtered_tokenized_TM_files"
 )
+FILTERED_TOKENIZED_CLEANED_TM_FOLDER_DIR = (
+    PARENT_DIR / DATA_FOLDER_DIR / "filtered_tokenized_cleaned_TM_files"
+)
 
 AFFIX_ISSUES = [
     "་འི",

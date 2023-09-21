@@ -59,3 +59,5 @@ if __name__ == "__main__":
     files_count = count_files_in_folder(FILTERED_TM_FOLDER_DIR)
     print(f"No of filtered TM files: {files_count}")
     print(f"No of filtered TM files with issues: {len(files_with_issues)}")
+    print("Affix issues found: ")
+    print(found_affix_issues)
