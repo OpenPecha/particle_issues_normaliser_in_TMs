@@ -71,7 +71,14 @@ def download_file_with_url(
 def download_tm_and_bo_files_from_github(
     tm_files: List[str], tm_output_file_path, bo_output_file_path
 ):
+    tm_files_count = len(tm_files)
+    tm_files_counter = 1
     for tm_file in tm_files:
+
+        print(
+            f"[{tm_files_counter}/{tm_files_count}] Downloading TM and BO files for {tm_file}"
+        )
+        tm_files_counter += 1
         # Downloading TM files
         downloader = GitHubFileDownloader(TOKEN, REPO_OWNER, tm_file)
         download_url = downloader.get_txt_file_download_url_from_repo()
@@ -96,7 +103,7 @@ if __name__ == "__main__":
     filtered_tm_files_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "filtered_TM_files"
     filtered_bo_files_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "filtered_BO_files"
     tm_files = [element for element in tm_files if element != ""]
-    tm_files = tm_files[220:]
+    tm_files = tm_files[:3]
 
     download_tm_and_bo_files_from_github(
         tm_files, filtered_tm_files_path, filtered_bo_files_path
