@@ -1,11 +1,11 @@
 from pathlib import Path
 
 from antx_annotation_transfer import antx_annotation_transfer, remove_newlines
-from bo_sentence_tokenizer_pipeline import bo_sent_tokenizer_pipeline
 from config import BO_FOLDER_DIR, TM_FOLDER_DIR
 from repo_file_downloader import GitHubFileDownloader, download_file_with_url
 from repo_file_uploader import GitHubFileUploader
 from settings import GITHUB_TOKEN
+from tibetan_sentence_tokenizer_pipeline import sentence_tokenizer_pipeline
 
 token = GITHUB_TOKEN
 
@@ -30,7 +30,7 @@ def pipeline(repo_names_list):
         # sentence tokenizing the bo.txt content
         bo_file_path = BO_FOLDER_DIR / f"{bo_repo_name}.txt"
         bo_file_content = Path(bo_file_path).read_text(encoding="utf-8")
-        bo_file_content_tokenized = bo_sent_tokenizer_pipeline(bo_file_content)
+        bo_file_content_tokenized = sentence_tokenizer_pipeline(bo_file_content)
         bo_tokenized_file_name = f"{bo_repo_name}_tokenized.txt"
         tokenized_file_path = BO_FOLDER_DIR / bo_tokenized_file_name
         tokenized_file_path.write_text(bo_file_content_tokenized, encoding="utf-8")
