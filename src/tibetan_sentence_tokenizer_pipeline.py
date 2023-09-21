@@ -30,3 +30,6 @@ if __name__ == "__main__":
     sentence_tokenize_and_save_in_folder(
         FILTERED_BO_FOLDER_DIR, FILTERED_TOKENIZED_BO_FOLDER_DIR
     )
+    sentence_tokenize_and_save_in_folder(
+        FILTERED_TM_FOLDER_DIR, FILTERED_TOKENIZED_TM_FOLDER_DIR
+    )
