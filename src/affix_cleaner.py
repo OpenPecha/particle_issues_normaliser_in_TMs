@@ -64,7 +64,7 @@ def clean_affix_and_save_in_folder(
     for txt_file in txt_files:
         print(f"[{counter}/{file_count}]] File {txt_file.name}...")
         file_content = txt_file.read_text(encoding="utf-8")
-        pattern_file_name = txt_file.name.replace("TM", "BO")
+        pattern_file_name = f"BO{txt_file.name[2:]}"
         patter_file_path = pattern_folder_path / pattern_file_name
         pattern_content = patter_file_path.read_text(encoding="utf-8")
         cleaned_content = learn_and_clean_affixes(file_content, pattern_content)
