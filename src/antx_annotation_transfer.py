@@ -2,7 +2,11 @@ import re
 
 from antx import transfer
 
-from config import BO_FOLDER_DIR, TM_FOLDER_DIR
+from config import (
+    FILTERED_TM_FOLDER_DIR,
+    FILTERED_TOKENIZED_CLEANED_TM_FOLDER_DIR,
+    FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR,
+)
 
 
 def antx_annotation_transfer(source_text, target_text):
@@ -10,24 +14,29 @@ def antx_annotation_transfer(source_text, target_text):
         ["One", r"(1️⃣)"],
         ["Two", r"(2️⃣)"],
         ["Three", r"(3️⃣)"],
+        ["tab", r"(\t)"],
         ["new_line", r"(\n)"],
+        ["space_line", r"(\s+)"],
     ]
     annotated_text = transfer(source_text, annotations, target_text, output="txt")
     return annotated_text
 
 
-def remove_newlines(text):
+def remove_newlines_tabs_spaces(text):
     # Use regex to remove newlines
-    text_without_newlines = re.sub(r"\n", " ", text)
-
-    return text_without_newlines
+    text = re.sub(r"\n", "", text)
+    text = re.sub(r"\t", "", text)
+    text = re.sub(r"\s+", "", text)
+    return text
 
 
 if __name__ == "__main__":
-    source_text = (TM_FOLDER_DIR / "TM0790.txt").read_text(encoding="utf-8")
-    target_text = (BO_FOLDER_DIR / "BO0790_tokenized.txt").read_text(encoding="utf-8")
-    target_text = remove_newlines(target_text)
+    file_name = "TM0001.txt"
+    source_text = (FILTERED_TM_FOLDER_DIR / file_name).read_text(encoding="utf-8")
+    target_text = (FILTERED_TOKENIZED_CLEANED_TM_FOLDER_DIR / file_name).read_text(
+        encoding="utf-8"
+    )
+    target_text = remove_newlines_tabs_spaces(target_text)
     annotated_text = antx_annotation_transfer(source_text, target_text)
-    with open(TM_FOLDER_DIR / "TM0790_cleaned.txt", "w", encoding="utf-8") as file:
-        for annotated_line in annotated_text.splitlines():
-            file.write(f"{annotated_line.strip()}\n")
+    output_file_path = FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR / file_name
+    output_file_path.write_text(annotated_text, encoding="utf-8")
