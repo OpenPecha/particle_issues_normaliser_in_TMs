@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 from typing import List
 
@@ -7,16 +8,27 @@ from config import (
     FILTERED_TOKENIZED_TM_FOLDER_DIR,
 )
 
-affix_issues = ["་འི", "་ས", "་ར"]
+affix_issues = ["་འི་", "་ས་", "་ར་", "་འི།", "་ས།", "་ར།"]
+
+
+def remove_spaces(input_string: str) -> str:
+    return input_string.replace(" ", "")
+
+
+def filter_tibetan_characters(input_string: str) -> str:
+    # Use a regular expression to remove non-Tibetan characters
+    tibetan_only_string = re.sub(r"[^\u0F00-\u0FFF\s]", "", input_string)
+    tibetan_only_string = remove_spaces(tibetan_only_string)
+    return tibetan_only_string
 
 
 def remove_affixes_ignore_first(
     input_text, affix_issues: List[str] = affix_issues
 ) -> str:
-    output_text = input_text
+    input_text
     for issue in affix_issues:
-        output_text = output_text.replace(issue, issue[1:])
-    return output_text
+        input_text = input_text.replace(issue, issue[1:])
+    return input_text
 
 
 def learn_and_clean_affixes(input_text: str, pattern_text: str) -> str:
@@ -27,12 +39,18 @@ def learn_and_clean_affixes(input_text: str, pattern_text: str) -> str:
         matching_affixes = [affix for affix in affix_issues if affix in input_line]
 
         if matching_affixes:
+            found_match = False
             for pattern_line in pattern_lines:
-                pattern_line_cleaned = remove_affixes_ignore_first(pattern_line)
-                input_line_cleaned = remove_affixes_ignore_first(input_line)
-                if pattern_line_cleaned == input_line_cleaned:
+                if remove_affixes_ignore_first(
+                    filter_tibetan_characters(input_line)
+                ) == remove_affixes_ignore_first(
+                    filter_tibetan_characters(pattern_line)
+                ):
                     output_text += pattern_line + "\n"
+                    found_match = True
                     break
+            if not found_match:
+                output_text += input_line + "\n"
         else:
             output_text += input_line + "\n"
 
