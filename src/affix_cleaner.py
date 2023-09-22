@@ -2,7 +2,8 @@ import re
 from pathlib import Path
 from typing import List
 
-from config import (
+from affix_check_script import count_files_in_folder
+from config import (  # DATA_FOLDER_DIR
     FILTERED_TOKENIZED_BO_FOLDER_DIR,
     FILTERED_TOKENIZED_CLEANED_TM_FOLDER_DIR,
     FILTERED_TOKENIZED_TM_FOLDER_DIR,
@@ -18,14 +19,12 @@ def remove_spaces(input_string: str) -> str:
 def filter_tibetan_characters(input_string: str) -> str:
     # Use a regular expression to remove non-Tibetan characters
     tibetan_only_string = re.sub(r"[^\u0F00-\u0FFF\s]", "", input_string)
-    tibetan_only_string = remove_spaces(tibetan_only_string)
-    return tibetan_only_string
+    return remove_spaces(tibetan_only_string)
 
 
 def remove_affixes_ignore_first(
     input_text, affix_issues: List[str] = affix_issues
 ) -> str:
-    input_text
     for issue in affix_issues:
         input_text = input_text.replace(issue, issue[1:])
     return input_text
@@ -53,18 +52,30 @@ def learn_and_clean_affixes(input_text: str, pattern_text: str) -> str:
                 output_text += input_line + "\n"
         else:
             output_text += input_line + "\n"
-
     return output_text
 
 
-if __name__ == "__main__":
-    input_text = Path(FILTERED_TOKENIZED_TM_FOLDER_DIR / "TM0791.txt").read_text(
-        encoding="utf-8"
-    )
-    pattern_text = Path(FILTERED_TOKENIZED_BO_FOLDER_DIR / "BO0791.txt").read_text(
-        encoding="utf-8"
-    )
+def clean_affix_and_save_in_folder(
+    input_folder_path: Path, pattern_folder_path: Path, output_folder_path: Path
+):
+    txt_files = input_folder_path.glob("*.txt")
+    file_count = count_files_in_folder(input_folder_path)
+    counter = 1
+    for txt_file in txt_files:
+        print(f"[{counter}/{file_count}]] File {txt_file.name}...")
+        file_content = txt_file.read_text(encoding="utf-8")
+        pattern_file_name = txt_file.name.replace("TM", "BO")
+        patter_file_path = pattern_folder_path / pattern_file_name
+        pattern_content = patter_file_path.read_text(encoding="utf-8")
+        cleaned_content = learn_and_clean_affixes(file_content, pattern_content)
+        output_file_path = Path(output_folder_path) / txt_file.name
+        output_file_path.write_text(cleaned_content)
+        counter += 1
 
-    output_text = learn_and_clean_affixes(input_text, pattern_text)
-    output_file_path = Path(FILTERED_TOKENIZED_CLEANED_TM_FOLDER_DIR / "TM0791.txt")
-    output_file_path.write_text(output_text, encoding="utf-8")
+
+if __name__ == "__main__":
+    clean_affix_and_save_in_folder(
+        FILTERED_TOKENIZED_TM_FOLDER_DIR,
+        FILTERED_TOKENIZED_BO_FOLDER_DIR,
+        FILTERED_TOKENIZED_CLEANED_TM_FOLDER_DIR,
+    )
