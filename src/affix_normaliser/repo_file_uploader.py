@@ -2,8 +2,8 @@ import requests
 from github import Github
 from retrying import retry
 
-from config import TM_FOLDER_DIR
-from settings import GITHUB_TOKEN
+from .config import TM_FOLDER_DIR
+from .settings import GITHUB_TOKEN
 
 
 class GitHubFileUploader:

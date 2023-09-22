@@ -3,8 +3,8 @@ from pathlib import Path
 
 from op_mt_tools.tokenizers import bo_sent_tokenizer as sentence_tokenizer
 
-from affix_check_script import count_files_in_folder
-from config import (
+from .affix_check_script import count_files_in_folder
+from .config import (
     FILTERED_BO_FOLDER_DIR,
     FILTERED_TM_FOLDER_DIR,
     FILTERED_TOKENIZED_BO_FOLDER_DIR,

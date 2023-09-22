@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import List, Tuple
 
-from config import AFFIX_ISSUES, FILTERED_TM_FOLDER_DIR
+from .config import AFFIX_ISSUES, FILTERED_TM_FOLDER_DIR
 
 
 def check_affix_issues(

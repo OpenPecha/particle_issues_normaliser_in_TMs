@@ -1,11 +1,14 @@
 from pathlib import Path
 
-from antx_annotation_transfer import antx_annotation_transfer, remove_newlines
-from config import BO_FOLDER_DIR, TM_FOLDER_DIR
-from repo_file_downloader import GitHubFileDownloader, download_file_with_url
-from repo_file_uploader import GitHubFileUploader
-from settings import GITHUB_TOKEN
-from tibetan_sentence_tokenizer_pipeline import sentence_tokenizer_pipeline
+from .antx_annotation_transfer import (
+    antx_annotation_transfer,
+    remove_newlines_tabs_spaces,
+)
+from .config import BO_FOLDER_DIR, TM_FOLDER_DIR
+from .repo_file_downloader import GitHubFileDownloader, download_file_with_url
+from .repo_file_uploader import GitHubFileUploader
+from .settings import GITHUB_TOKEN
+from .tibetan_sentence_tokenizer_pipeline import sentence_tokenizer_pipeline
 
 token = GITHUB_TOKEN
 
@@ -40,7 +43,7 @@ def pipeline(repo_names_list):
             encoding="utf-8"
         )
         target_text = bo_file_content_tokenized
-        target_text = remove_newlines(target_text)
+        target_text = remove_newlines_tabs_spaces(target_text)
         AnnotatedText = antx_annotation_transfer(source_text, target_text)
         new_annotated_file_name = f"{tm_repo_name}_cleaned.txt"
         new_annotated_file_path = TM_FOLDER_DIR / new_annotated_file_name

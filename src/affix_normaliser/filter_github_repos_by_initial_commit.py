@@ -6,8 +6,8 @@ from typing import List
 
 from github import Github
 
-from config import DATA_FOLDER_DIR, PARENT_DIR
-from settings import GITHUB_TOKEN
+from .config import DATA_FOLDER_DIR, PARENT_DIR
+from .settings import GITHUB_TOKEN
 
 token = GITHUB_TOKEN
 

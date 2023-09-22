@@ -3,8 +3,8 @@ from pathlib import Path
 
 from antx import transfer
 
-from affix_check_script import count_files_in_folder
-from config import (
+from .affix_check_script import count_files_in_folder
+from .config import (
     FILTERED_TM_FOLDER_DIR,
     FILTERED_TOKENIZED_CLEANED_TM_FOLDER_DIR,
     FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR,
