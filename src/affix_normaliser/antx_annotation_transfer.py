@@ -38,9 +38,23 @@ def annotation_transfer_and_save_in_folder(
         target_file_path = target_folder_path / txt_file.name
         target_content = target_file_path.read_text(encoding="utf-8")
         annotated_content = antx_annotation_transfer(source_content, target_content)
-        output_file_path = Path(output_folder_path) / txt_file.name
+        output_file_name = add_bo_to_filename(txt_file.name)
+        output_file_path = Path(output_folder_path) / output_file_name
         output_file_path.write_text(annotated_content, encoding="utf-8")
         counter += 1
+
+
+def add_bo_to_filename(file_name):
+    base_name, extension = file_name.split(".")
+
+    # remove version name if exists
+    if "-v" in base_name:
+        base_name = base_name.split("-v")[0]
+    # Add "-bo" to the base name
+    new_base_name = base_name + "-bo"
+    new_file_name = f"{new_base_name}.{extension}"
+
+    return new_file_name
 
 
 def remove_newlines_tabs_spaces(text):
