@@ -34,12 +34,12 @@ class GitHubFileUploader:
             x, requests.exceptions.RequestException
         ),  # Retry on network errors
     )
-    def upload_txt_file(self, file_path, file_data):
+    def upload_txt_file(self, file_name, file_data):
         g = Github(self.token)
         repo = g.get_repo(f"{self.repo_owner}/{self.repo_name}")
 
         # Get the current SHA hash of the file
-        current_sha = self.get_file_sha(file_path)
+        current_sha = self.get_file_sha(file_name)
 
         # Specify the commit message
         commit_message = "Update file via script"
@@ -47,11 +47,11 @@ class GitHubFileUploader:
         if current_sha:
             # File exists, update it
             repo.update_file(
-                file_path, commit_message, file_data, current_sha, branch="main"
+                file_name, commit_message, file_data, current_sha, branch="main"
             )
         else:
             # File doesn't exist, create it
-            repo.create_file(file_path, commit_message, file_data, branch="main")
+            repo.create_file(file_name, commit_message, file_data, branch="main")
 
 
 def upload_files_in_folder_to_repo(folder_path: Path):
