@@ -62,11 +62,8 @@ def upload_files_in_folder_to_repo(folder_path: Path):
     for txt_file in txt_files:
         print(f"[{counter}/{file_count}]] File {txt_file.name} Uploading...")
         file_content = txt_file.read_text(encoding="utf-8")
-
-        file_name = txt_file.name
-        repo_name = txt_file.name
-        uploader = GitHubFileUploader(token, repo_owner, repo_name)
-        uploader.upload_txt_file(file_name, file_content)
+        uploader = GitHubFileUploader(token, repo_owner, txt_file.name)
+        uploader.upload_txt_file(txt_file.name, file_content)
         counter += 1
 
 
