@@ -5,7 +5,7 @@ import requests
 from github import Github
 from retrying import retry
 
-from .config import DATA_FOLDER_DIR, PARENT_DIR
+from .config import DATA_FOLDER_DIR
 from .settings import GITHUB_TOKEN
 
 TOKEN = GITHUB_TOKEN
@@ -97,11 +97,9 @@ def download_tm_and_bo_files_from_github(
 
 if __name__ == "__main__":
     # Usage example
-    tm_files = (
-        Path(PARENT_DIR / DATA_FOLDER_DIR / "filtered_TMs.txt").read_text().split("\n")
-    )
-    filtered_tm_files_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "filtered_TM_files"
-    filtered_bo_files_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "filtered_BO_files"
+    tm_files = Path(DATA_FOLDER_DIR / "filtered_TMs.txt").read_text().split("\n")
+    filtered_tm_files_path = Path(DATA_FOLDER_DIR) / "filtered_TM_files"
+    filtered_bo_files_path = Path(DATA_FOLDER_DIR) / "filtered_BO_files"
     tm_files = [element for element in tm_files if element != ""]
     tm_files = tm_files[:3]
 

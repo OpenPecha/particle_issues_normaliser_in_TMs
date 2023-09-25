@@ -55,12 +55,3 @@ if __name__ == "__main__":
         FILTERED_TOKENIZED_CLEANED_TM_FOLDER_DIR,
         FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR,
     )
-    # file_name = "TM0791.txt"
-    # source_text = (FILTERED_TM_FOLDER_DIR / file_name).read_text(encoding="utf-8")
-    # target_text = (FILTERED_TOKENIZED_CLEANED_TM_FOLDER_DIR / file_name).read_text(
-    #     encoding="utf-8"
-    # )
-    # target_text = remove_newlines_tabs_spaces(target_text)
-    # annotated_text = antx_annotation_transfer(source_text, target_text)
-    # output_file_path = FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR / file_name
-    # output_file_path.write_text(annotated_text, encoding="utf-8")
