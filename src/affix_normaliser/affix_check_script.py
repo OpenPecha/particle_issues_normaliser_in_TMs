@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import List, Tuple
 
-from .config import AFFIX_ISSUES, FILTERED_TM_FOLDER_DIR
+from .config import AFFIX_ISSUES, ALL_TM_FOLDER_DIR, DATA_FOLDER_DIR
 
 
 def check_affix_issues(
@@ -31,17 +31,25 @@ def detect_affix_issues_in_folder(folder_path: Path):
     return has_affix_issues, found_affix_issues
 
 
-def identify_files_with_affix_issues(folder_path, affix_issues: List[str]) -> List[str]:
+def identify_files_with_affix_issues(
+    folder_path, affix_issues: List[str]
+) -> Tuple[List[str], List[str]]:
     txt_files = folder_path.glob("*.txt")
     files_with_issues = []
+    files_without_issues = []
+
     for txt_file in txt_files:
         file_content = txt_file.read_text(encoding="utf-8")
+        found_affix = False
         for issue in affix_issues:
             if issue in file_content:
                 files_with_issues.append(txt_file.name)
+                found_affix = True
                 break
+        if not found_affix:
+            files_without_issues.append(txt_file.name)
 
-    return files_with_issues
+    return files_with_issues, files_without_issues
 
 
 def count_files_in_folder(folder_path: Path) -> int:
@@ -49,15 +57,21 @@ def count_files_in_folder(folder_path: Path) -> int:
 
 
 if __name__ == "__main__":
-    has_affix_issues, found_affix_issues = detect_affix_issues_in_folder(
-        FILTERED_TM_FOLDER_DIR
-    )
-    files_with_issues = identify_files_with_affix_issues(
-        FILTERED_TM_FOLDER_DIR, found_affix_issues
+    # has_affix_issues, found_affix_issues = detect_affix_issues_in_folder(
+    #     ALL_TM_FOLDER_DIR
+    # )
+
+    files_with_issues, files_without_issues = identify_files_with_affix_issues(
+        ALL_TM_FOLDER_DIR, AFFIX_ISSUES
     )
 
-    files_count = count_files_in_folder(FILTERED_TM_FOLDER_DIR)
+    files_count = count_files_in_folder(ALL_TM_FOLDER_DIR)
     print(f"No of filtered TM files: {files_count}")
     print(f"No of filtered TM files with issues: {len(files_with_issues)}")
-    print("Affix issues found: ")
-    print(found_affix_issues)
+    print(f"No of filtered TM files without issues: {len(files_without_issues)}")
+    Path(DATA_FOLDER_DIR / "TM_files_with_issues.txt").write_text(
+        "\n".join(files_with_issues)
+    )
+    Path(DATA_FOLDER_DIR / "TM_files_without_issues.txt").write_text(
+        "\n".join(files_without_issues)
+    )

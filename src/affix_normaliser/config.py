@@ -18,16 +18,4 @@ FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR = (
 )
 ALL_TM_FOLDER_DIR = DATA_FOLDER_DIR / "all_TM_files"
 
-AFFIX_ISSUES = [
-    "་འི",
-    "་ར",
-    "་ས",
-    "་འམ",
-    "་འང",
-    "་འོ",
-    "་འིའོ",
-    "་འིའམ",
-    "་འིའང",
-    "་འོའམ",
-    "་འོའང",
-]
+AFFIX_ISSUES = ["་འི་", "་ས་", "་ར་", "་འི།", "་ས།", "་ར།"]
