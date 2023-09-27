@@ -80,31 +80,41 @@ def download_file_with_url(
         write_to_error_log(ERROR_LOG_FILE, new_downloaded_file_name)
 
 
-def download_tm_and_bo_files_from_github(
-    tm_files: List[str], tm_output_file_path, bo_output_file_path
-):
-    tm_files_count = len(tm_files)
+def download_tm_files_from_github(tm_file_names: List[str], tm_output_file_path):
+    tm_files_count = len(tm_file_names)
     tm_files_counter = 1
-    for tm_file in tm_files:
-
+    for tm_file_name in tm_file_names:
         print(
-            f"[{tm_files_counter}/{tm_files_count}] Downloading TM and BO files for {tm_file}"
+            f"[{tm_files_counter}/{tm_files_count}] Downloading TM file for {tm_file_name}"
         )
         tm_files_counter += 1
         # Downloading TM files
-        downloader = GitHubFileDownloader(TOKEN, REPO_OWNER, tm_file)
+        downloader = GitHubFileDownloader(TOKEN, REPO_OWNER, tm_file_name)
         download_url = downloader.get_txt_file_download_url_from_repo()
-        download_file_with_url(download_url, tm_file + ".txt", tm_output_file_path)
+        download_file_with_url(download_url, tm_file_name + ".txt", tm_output_file_path)
 
-        # Downloading the corresponding BO files
-        # bo_file = f"BO{tm_file[2:]}"
-        # bo_repo_name = bo_file
-        # # For TM file like TM0701-v4,corresponding BO file is BO0701
-        # if "-" in bo_file:
-        #     bo_repo_name = bo_file[: bo_file.index("-")]
-        # downloader = GitHubFileDownloader(TOKEN, REPO_OWNER, bo_repo_name)
-        # download_url = downloader.get_txt_file_download_url_from_repo()
-        # download_file_with_url(download_url, bo_file + ".txt", bo_output_file_path)
+
+def download_bo_files_from_github_with_TM_file_names(
+    tm_file_names: List[str], bo_output_file_path
+):
+    # Extracing BO file names from TM file names
+    bo_file_names = [f"BO{tm_file[2:]}" for tm_file in tm_file_names]
+    # Removing the version number from the BO file names
+    bo_file_names = [
+        bo_file_name
+        if "-" not in bo_file_name
+        else bo_file_name[: bo_file_name.index("-")]
+        for bo_file_name in bo_file_names
+    ]
+    bo_files_count = len(bo_file_names)
+    bo_files_counter = 1
+    for bo_file_name in bo_file_names:
+        print(f"[{bo_files_counter}/{bo_files_count}] BO file for {bo_file_name}")
+        bo_files_counter += 1
+        # Downloading BO files
+        downloader = GitHubFileDownloader(TOKEN, REPO_OWNER, bo_file_name)
+        download_url = downloader.get_txt_file_download_url_from_repo()
+        download_file_with_url(download_url, bo_file_name + ".txt", bo_output_file_path)
 
 
 def write_to_error_log(error_log_file, filename):
@@ -122,11 +132,5 @@ if __name__ == "__main__":
     tm_files = [element for element in tm_files if element != ""]
     tm_files = tm_files[:3]
 
-    download_tm_and_bo_files_from_github(
-        tm_files, filtered_tm_files_path, filtered_bo_files_path
-    )
-
-    # repo_name = "BO0790"
-    # downloader = GitHubFileDownloader(token, repo_owner, repo_name)
-    # download_url = downloader.get_txt_file_download_url_from_repo()
-    # download_file_with_url(download_url, repo_name + ".txt", BO_FOLDER_DIR)
+    download_tm_files_from_github(tm_files, filtered_tm_files_path)
+    # download_bo_files_from_github_with_TM_file_names(tm_files, filtered_tm_files_path)
