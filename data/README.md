@@ -43,6 +43,21 @@ TM file count = 445
 
 Note: 1553 + 445 = 1998
 
-### filtered_BO_files filtered_TM_files Folder
+## filtered_BO_files
 
-Folder to store BO and TM files that are present in the file filtered_TMs.txt
+bo files downloaded from TM_files_with_issues.txt
+No of BO files downloaded: 1443
+
+## Failed_to_download_BOs.txt
+
+List of all BO names that were not able to download. (404)
+TMs names not able to download -> 107
+
+Note: 1443 + 107 = 1550 , but no of TM_with_issues = 1553
+Three Ids missing are '0714-v1', '0701-v4', '0718-v2'.
+This happened becauses both TM0714-v1 and TM0714 are segmented from same bo file BO0714.
+Like wise for  TM0701-v4 and TM0701 are segmented from BO0701.
+
+## filtered_TM_files Folder
+
+Folder to TM files with issues.
