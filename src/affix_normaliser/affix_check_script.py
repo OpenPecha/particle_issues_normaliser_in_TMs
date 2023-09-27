@@ -65,9 +65,6 @@ def count_files_in_folder(folder_path: Path) -> int:
 
 
 if __name__ == "__main__":
-    # has_affix_issues, found_affix_issues = detect_affix_issues_in_folder(
-    #     ALL_TM_FOLDER_DIR
-    # )
 
     files_with_issues, files_without_issues = identify_files_with_affix_issues(
         ALL_TM_FOLDER_DIR, AFFIX_ISSUES
