@@ -127,10 +127,8 @@ def write_to_error_log(error_log_file, filename):
 if __name__ == "__main__":
     # Usage example
     tm_files = Path(DATA_FOLDER_DIR / "all_TMs_list.txt").read_text().split("\n")
-    filtered_tm_files_path = Path(DATA_FOLDER_DIR) / "all_TM_files"
+    all_tm_files_path = Path(DATA_FOLDER_DIR) / "all_TM_files"
     filtered_bo_files_path = Path(DATA_FOLDER_DIR) / "filtered_BO_files"
     tm_files = [element for element in tm_files if element != ""]
-    tm_files = tm_files[:3]
 
-    download_tm_files_from_github(tm_files, filtered_tm_files_path)
-    # download_bo_files_from_github_with_TM_file_names(tm_files, filtered_tm_files_path)
+    download_tm_files_from_github(tm_files, all_tm_files_path)
