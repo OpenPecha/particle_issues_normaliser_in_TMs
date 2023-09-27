@@ -11,6 +11,8 @@ from .settings import GITHUB_TOKEN
 TOKEN = GITHUB_TOKEN
 REPO_OWNER = "MonlamAI"
 
+ERROR_LOG_FILE = "Failed_to_download_TMs.txt"
+
 
 class GitHubFileDownloader:
     def __init__(self, token, repo_owner, repo_name):
@@ -61,6 +63,7 @@ def download_file_with_url(
 
     if download_url is None:
         print("Failed to download file. Download URL is None")
+        write_to_error_log(ERROR_LOG_FILE, new_downloaded_file_name)
         return
     # Send a GET request to download the file
     response = requests.get(download_url)
@@ -74,6 +77,7 @@ def download_file_with_url(
         print(f"File downloaded and saved to {local_file_path}")
     else:
         print(f"Failed to download file. Status code: {response.status_code}")
+        write_to_error_log(ERROR_LOG_FILE, new_downloaded_file_name)
 
 
 def download_tm_and_bo_files_from_github(
@@ -101,6 +105,13 @@ def download_tm_and_bo_files_from_github(
         # downloader = GitHubFileDownloader(TOKEN, REPO_OWNER, bo_repo_name)
         # download_url = downloader.get_txt_file_download_url_from_repo()
         # download_file_with_url(download_url, bo_file + ".txt", bo_output_file_path)
+
+
+def write_to_error_log(error_log_file, filename):
+    # Append the filename to the error log file
+    error_log_file_path = DATA_FOLDER_DIR / error_log_file
+    with open(error_log_file_path, "a") as log_file:
+        log_file.write(f"{filename}: Failed to download: \n")
 
 
 if __name__ == "__main__":
