@@ -1,3 +1,4 @@
+import shutil
 from pathlib import Path
 from typing import List
 
@@ -47,6 +48,35 @@ def list_difference(list1, list2):
 
 def count_files_in_folder(folder_path: Path) -> int:
     return len([item for item in folder_path.iterdir() if item.is_file()])
+
+
+def copy_files(file_list: List[str], source_folder: Path, destination_folder: Path):
+    try:
+        source_path = Path(source_folder)
+        destination_path = Path(destination_folder)
+
+        # Check if the source folder exists
+        if not source_path.exists():
+            raise FileNotFoundError(f"Source folder '{source_path}' does not exist.")
+
+        # Create the destination folder if it doesn't exist
+        destination_path.mkdir(parents=True, exist_ok=True)
+
+        for file_name in file_list:
+            source_file = source_path / file_name
+            destination_file = destination_path / file_name
+
+            # Check if the file exists in the source folder
+            if not source_file.exists():
+                print(f"File '{file_name}' does not exist in the source folder.")
+                continue
+
+            # Copy the file to the destination folder
+            shutil.copy(source_file, destination_file)
+            print(f"File '{file_name}' copied successfully to the destination folder.")
+
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
 
 
 if __name__ == "__main__":
