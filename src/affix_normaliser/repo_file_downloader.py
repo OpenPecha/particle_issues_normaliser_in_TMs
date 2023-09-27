@@ -22,26 +22,30 @@ class GitHubFileDownloader:
         # Create a GitHub instance using your token
         g = Github(self.token)
 
-        # Get the repository
-        repo = g.get_repo(f"{self.repo_owner}/{self.repo_name}")
+        try:
+            # Get the repository
+            repo = g.get_repo(f"{self.repo_owner}/{self.repo_name}")
 
-        # Get the list of contents in the repository root
-        contents = repo.get_contents("")
+            # Get the list of contents in the repository root
+            contents = repo.get_contents("")
 
-        target_file_suffix = ".txt"
-        # TM repo names start with "TM", there would two .txt files in the repo,
-        # one for the tibetan language and one for the english language
-        if self.repo_name.startswith("TM"):
-            target_file_suffix = "bo.txt"
+            target_file_suffix = ".txt"
+            # TM repo names start with "TM", there would be two .txt files in the repo,
+            # one for the Tibetan language and one for the English language
+            if self.repo_name.startswith("TM"):
+                target_file_suffix = "bo.txt"
 
-        txt_file_name = ""
-        for content_file in contents:
-            if content_file.name.endswith(target_file_suffix):
-                txt_file_name = content_file.name
+            txt_file_name = ""
+            for content_file in contents:
+                if content_file.name.endswith(target_file_suffix):
+                    txt_file_name = content_file.name
 
-        # Get the file contents
-        file_contents = repo.get_contents(txt_file_name)
-        return file_contents.download_url
+            # Get the file contents
+            file_contents = repo.get_contents(txt_file_name)
+            return file_contents.download_url
+        except Exception as error:
+            print(f"An error occurred: {error}")
+            return None
 
 
 @retry(
@@ -54,6 +58,10 @@ class GitHubFileDownloader:
 def download_file_with_url(
     download_url, new_downloaded_file_name, destination_folder="."
 ):
+
+    if download_url is None:
+        print("Failed to download file. Download URL is None")
+        return
     # Send a GET request to download the file
     response = requests.get(download_url)
 
@@ -85,20 +93,20 @@ def download_tm_and_bo_files_from_github(
         download_file_with_url(download_url, tm_file + ".txt", tm_output_file_path)
 
         # Downloading the corresponding BO files
-        bo_file = f"BO{tm_file[2:]}"
-        bo_repo_name = bo_file
-        # For TM file like TM0701-v4,corresponding BO file is BO0701
-        if "-" in bo_file:
-            bo_repo_name = bo_file[: bo_file.index("-")]
-        downloader = GitHubFileDownloader(TOKEN, REPO_OWNER, bo_repo_name)
-        download_url = downloader.get_txt_file_download_url_from_repo()
-        download_file_with_url(download_url, bo_file + ".txt", bo_output_file_path)
+        # bo_file = f"BO{tm_file[2:]}"
+        # bo_repo_name = bo_file
+        # # For TM file like TM0701-v4,corresponding BO file is BO0701
+        # if "-" in bo_file:
+        #     bo_repo_name = bo_file[: bo_file.index("-")]
+        # downloader = GitHubFileDownloader(TOKEN, REPO_OWNER, bo_repo_name)
+        # download_url = downloader.get_txt_file_download_url_from_repo()
+        # download_file_with_url(download_url, bo_file + ".txt", bo_output_file_path)
 
 
 if __name__ == "__main__":
     # Usage example
-    tm_files = Path(DATA_FOLDER_DIR / "filtered_TMs.txt").read_text().split("\n")
-    filtered_tm_files_path = Path(DATA_FOLDER_DIR) / "filtered_TM_files"
+    tm_files = Path(DATA_FOLDER_DIR / "all_TMs_list.txt").read_text().split("\n")
+    filtered_tm_files_path = Path(DATA_FOLDER_DIR) / "all_TM_files"
     filtered_bo_files_path = Path(DATA_FOLDER_DIR) / "filtered_BO_files"
     tm_files = [element for element in tm_files if element != ""]
     tm_files = tm_files[:3]
