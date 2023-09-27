@@ -37,6 +37,14 @@ def file_name_without_txt(file_name: str) -> str:
     return file_name
 
 
+def remove_duplicates(input_list: List) -> List:
+    return list(set(input_list))
+
+
+def list_difference(list1, list2):
+    return [item for item in list1 if item not in list2]
+
+
 def count_files_in_folder(folder_path: Path) -> int:
     return len([item for item in folder_path.iterdir() if item.is_file()])
 
@@ -67,4 +75,17 @@ if __name__ == "__main__":
     print(f"No of BO files failed to download: {bo_failed_count}")
     print(
         f"No of BO file missing: {tm_with_issues_count - bo_downloaded_count - bo_failed_count}"
+    )
+
+    tm_with_issues = remove_duplicates(tm_with_issues)
+    unique_tm_ids = [tm_issue[2:] for tm_issue in tm_with_issues]
+
+    bo_files = remove_duplicates(bo_files)
+    unique_bo_ids = [bo_file[2:] for bo_file in bo_files]
+
+    print(f"No of unique TM ids: {len(unique_tm_ids)}")
+    print(f"No of unique BO ids: {len(unique_bo_ids)}")
+
+    print(
+        f"Unique TM ids not in BO ids: {list_difference(unique_tm_ids, unique_bo_ids)}"
     )
