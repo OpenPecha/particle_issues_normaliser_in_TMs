@@ -41,15 +41,23 @@ def identify_files_with_affix_issues(
     for txt_file in txt_files:
         file_content = txt_file.read_text(encoding="utf-8")
         found_affix = False
+        file_name = file_name_without_txt(txt_file.name)
         for issue in affix_issues:
             if issue in file_content:
-                files_with_issues.append(txt_file.name)
+                files_with_issues.append(file_name)
                 found_affix = True
                 break
         if not found_affix:
-            files_without_issues.append(txt_file.name)
+            files_without_issues.append(file_name)
 
     return files_with_issues, files_without_issues
+
+
+def file_name_without_txt(file_name: str) -> str:
+    index = file_name.find(".txt")
+    if index != -1:
+        return file_name[:index]
+    return file_name
 
 
 def count_files_in_folder(folder_path: Path) -> int:
