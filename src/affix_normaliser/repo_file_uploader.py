@@ -4,8 +4,8 @@ import requests
 from github import Github
 from retrying import retry
 
-from .affix_check_script import count_files_in_folder
 from .config import TM_FOLDER_DIR
+from .file_utils import count_files_in_folder
 from .settings import GITHUB_TOKEN
 
 TOKEN = GITHUB_TOKEN

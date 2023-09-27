@@ -2,12 +2,12 @@ import re
 from pathlib import Path
 from typing import List
 
-from .affix_check_script import count_files_in_folder
 from .config import (  # DATA_FOLDER_DIR
     FILTERED_TOKENIZED_BO_FOLDER_DIR,
     FILTERED_TOKENIZED_CLEANED_TM_FOLDER_DIR,
     FILTERED_TOKENIZED_TM_FOLDER_DIR,
 )
+from .file_utils import count_files_in_folder
 
 affix_issues = ["་འི་", "་ས་", "་ར་", "་འི།", "་ས།", "་ར།"]
 

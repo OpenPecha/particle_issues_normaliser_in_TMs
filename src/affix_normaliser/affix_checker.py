@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import List, Tuple
 
 from .config import AFFIX_ISSUES, ALL_TM_FOLDER_DIR, DATA_FOLDER_DIR
+from .file_utils import count_files_in_folder, file_name_without_txt
 
 
 def check_affix_issues(
@@ -51,17 +52,6 @@ def identify_files_with_affix_issues(
             files_without_issues.append(file_name)
 
     return files_with_issues, files_without_issues
-
-
-def file_name_without_txt(file_name: str) -> str:
-    index = file_name.find(".txt")
-    if index != -1:
-        return file_name[:index]
-    return file_name
-
-
-def count_files_in_folder(folder_path: Path) -> int:
-    return len([item for item in folder_path.iterdir() if item.is_file()])
 
 
 if __name__ == "__main__":
