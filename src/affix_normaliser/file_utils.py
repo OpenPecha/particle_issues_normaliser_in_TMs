@@ -50,6 +50,13 @@ def count_files_in_folder(folder_path: Path) -> int:
     return len([item for item in folder_path.iterdir() if item.is_file()])
 
 
+def remove_version_number_from_file_name(file_name: str) -> str:
+    index = file_name.find("-v")
+    if index != -1:
+        return file_name[:index]
+    return file_name
+
+
 def copy_files(file_list: List[str], source_folder: Path, destination_folder: Path):
     try:
         source_path = Path(source_folder)

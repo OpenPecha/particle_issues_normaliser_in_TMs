@@ -7,7 +7,11 @@ from .config import (  # DATA_FOLDER_DIR
     FILTERED_TOKENIZED_CLEANED_TM_FOLDER_DIR,
     FILTERED_TOKENIZED_TM_FOLDER_DIR,
 )
-from .file_utils import count_files_in_folder
+from .file_utils import (
+    count_files_in_folder,
+    file_name_without_txt,
+    remove_version_number_from_file_name,
+)
 
 affix_issues = ["་འི་", "་ས་", "་ར་", "་འི།", "་ས།", "་ར།"]
 
@@ -64,12 +68,20 @@ def clean_affix_and_save_in_folder(
     for txt_file in txt_files:
         print(f"[{counter}/{file_count}]] File {txt_file.name}...")
         file_content = txt_file.read_text(encoding="utf-8")
-        pattern_file_name = f"BO{txt_file.name[2:]}"
-        patter_file_path = pattern_folder_path / pattern_file_name
-        pattern_content = patter_file_path.read_text(encoding="utf-8")
-        cleaned_content = learn_and_clean_affixes(file_content, pattern_content)
+        tm_file_name = file_name_without_txt(txt_file.name)
+        pattern_file_name = f"BO{tm_file_name[2:]}"
+        pattern_file_name = remove_version_number_from_file_name(pattern_file_name)
+        pattern_file_name = f"{pattern_file_name}.txt"
+
+        pattern_file_path = pattern_folder_path / pattern_file_name
+
         output_file_path = Path(output_folder_path) / txt_file.name
-        output_file_path.write_text(cleaned_content)
+        if pattern_file_path.exists():
+            pattern_content = pattern_file_path.read_text(encoding="utf-8")
+            cleaned_content = learn_and_clean_affixes(file_content, pattern_content)
+            output_file_path.write_text(cleaned_content)
+        else:
+            output_file_path.write_text(file_content)
         counter += 1
 
 
