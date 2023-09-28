@@ -10,8 +10,8 @@ from .config import (
 )
 from .file_utils import count_files_in_folder
 
-ANTX_ERROR_LOG_FILE = "unsuccessful_antx_annotation_transfer.txt"
-ANTX_LOG_FILE = "antx_annotation_transfer.txt"
+ANTX_ERROR_LOG_FILE = "antx_annotation_transfer_error_log.txt"
+ANTX_LOG_FILE = "antx_annotation_transfer_log.txt"
 
 
 def get_differences(source_text: str, target_text: str) -> List[tuple]:
@@ -28,18 +28,23 @@ def validate_missing_annotation_condition(diffs: List[tuple]) -> bool:
 
 
 def verify_annotation_transfer(
-    original_text: str, modified_text: str, modifed_file_name
+    original_text: str, modified_text: str, modified_file_name: str
 ):
     diffs = get_differences(original_text, modified_text)
     has_extra_annotation = any(diff[0] == 1 for diff in diffs)
     if has_extra_annotation:
-        write_to_antx_error_log(modifed_file_name, "Extra annotation found")
-    missing_annotation = any(diff[0] == -1 for diff in diffs)
-    if missing_annotation:
-        if validate_missing_annotation_condition(diffs):
-            write_to_antx_log(modifed_file_name)
-        write_to_antx_error_log(modifed_file_name, "Missing annotation found.")
-    write_to_antx_error_log(modifed_file_name, "File identiacal to original file.")
+        write_to_antx_error_log(modified_file_name, "Extra annotation found")
+    else:
+        missing_annotation = any(diff[0] == -1 for diff in diffs)
+        if missing_annotation:
+            if validate_missing_annotation_condition(diffs):
+                write_to_antx_log(modified_file_name)
+            else:
+                write_to_antx_error_log(modified_file_name, "Missing annotation found.")
+        else:
+            write_to_antx_error_log(
+                modified_file_name, "File identical to original file."
+            )
 
 
 def write_to_antx_log(filename):
