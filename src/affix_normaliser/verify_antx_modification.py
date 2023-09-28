@@ -49,7 +49,7 @@ def write_to_antx_log(filename):
 
 
 def write_to_antx_error_log(filename, error_message):
-    error_log_file_path = DATA_FOLDER_DIR / ANTX_LOG_FILE
+    error_log_file_path = DATA_FOLDER_DIR / ANTX_ERROR_LOG_FILE
     with open(error_log_file_path, "a") as log_file:
         log_file.write(f"{filename}: {error_message} \n")
 
