@@ -13,6 +13,15 @@ from .file_utils import count_files_in_folder
 ANTX_ERROR_LOG_FILE = "antx_annotation_transfer_error_log.txt"
 ANTX_LOG_FILE = "antx_annotation_transfer_log.txt"
 
+log_file_path = DATA_FOLDER_DIR / ANTX_LOG_FILE
+error_log_file_path = DATA_FOLDER_DIR / ANTX_ERROR_LOG_FILE
+
+# Clear the log files if they exist
+if log_file_path.exists():
+    log_file_path.unlink()
+if error_log_file_path.exists():
+    error_log_file_path.unlink()
+
 
 def get_differences(source_text: str, target_text: str) -> List[tuple]:
     diffs = get_diffs(source_text, target_text)
