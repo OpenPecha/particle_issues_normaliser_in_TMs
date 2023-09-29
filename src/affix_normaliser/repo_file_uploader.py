@@ -4,7 +4,7 @@ import requests
 from github import Github
 from retrying import retry
 
-from .config import TM_FOLDER_DIR
+from .config import DATA_FOLDER_DIR
 from .file_utils import count_files_in_folder
 from .settings import GITHUB_TOKEN
 
@@ -42,7 +42,7 @@ class GitHubFileUploader:
         current_sha = self.get_file_sha(file_name)
 
         # Specify the commit message
-        commit_message = "Update file via script"
+        commit_message = "Clean affix issues"
 
         if current_sha:
             # File exists, update it
@@ -61,19 +61,25 @@ def upload_files_in_folder_to_repo(folder_path: Path):
 
     for txt_file in txt_files:
         print(f"[{counter}/{file_count}]] File {txt_file.name} Uploading...")
+        repo_name = remove_hyphen_bo_from_file_name(txt_file.name)
+        uploader = GitHubFileUploader(TOKEN, REPO_OWNER, repo_name)
         file_content = txt_file.read_text(encoding="utf-8")
-        uploader = GitHubFileUploader(token, repo_owner, txt_file.name)
         uploader.upload_txt_file(txt_file.name, file_content)
         counter += 1
 
 
-if __name__ == "__main__":
-    # Usage example
-    token = GITHUB_TOKEN
-    repo_owner = "tenzin3"
-    repo_name = "test_repo"
+def remove_hyphen_bo_from_file_name(file_name: str) -> str:
+    index = file_name.find("-bo")
+    if index != -1:
+        return file_name[:index]
+    return file_name
 
-    uploader = GitHubFileUploader(token, repo_owner, repo_name)
-    github_repo_file_path = "TM0790-bo.txt"
-    file_data = (TM_FOLDER_DIR / "TM0790_cleaned.txt").read_text(encoding="utf-8")
-    uploader.upload_txt_file(github_repo_file_path, file_data)
+
+if __name__ == "__main__":
+
+    # uploader = GitHubFileUploader(TOKEN, REPO_OWNER, repo_name)
+    # github_repo_file_path = "TM0791-bo.txt"
+    # file_data = (DATA_FOLDER_DIR / "upload_test_folder"/  "TM0791-bo.txt").read_text(encoding="utf-8")
+    # uploader.upload_txt_file(github_repo_file_path, file_data)
+    test_upload_folder = DATA_FOLDER_DIR / "upload_test_folder"
+    upload_files_in_folder_to_repo(test_upload_folder)

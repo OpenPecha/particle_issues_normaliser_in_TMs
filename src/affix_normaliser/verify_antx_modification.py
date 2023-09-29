@@ -36,20 +36,36 @@ def validate_missing_annotation_condition(diffs: List[tuple]) -> bool:
     return True
 
 
+def validate_extra_annotation_condition(diffs: List[tuple]) -> bool:
+    extra_annotations = [diff for diff in diffs if diff[0] == 1]
+    for extra_annotation in extra_annotations:
+        if extra_annotation[1] not in [""]:
+            return False
+    return True
+
+
 def verify_annotation_transfer(
     original_text: str, modified_text: str, modified_file_name: str
 ):
     diffs = get_differences(original_text, modified_text)
-    has_extra_annotation = any(diff[0] == 1 for diff in diffs)
+    has_extra_annotation = [diff for diff in diffs if diff[0] == 1]
     if has_extra_annotation:
-        write_to_antx_error_log(modified_file_name, "Extra annotation found")
+        if validate_extra_annotation_condition(diffs):
+            write_to_antx_log(modified_file_name)
+        else:
+            write_to_antx_error_log(
+                modified_file_name,
+                f"Extra annotation found:{has_extra_annotation}",
+            )
     else:
-        missing_annotation = any(diff[0] == -1 for diff in diffs)
+        missing_annotation = [diff for diff in diffs if diff[0] == -1]
         if missing_annotation:
             if validate_missing_annotation_condition(diffs):
                 write_to_antx_log(modified_file_name)
             else:
-                write_to_antx_error_log(modified_file_name, "Missing annotation found.")
+                write_to_antx_error_log(
+                    modified_file_name, f"Missing annotation found:{missing_annotation}"
+                )
         else:
             write_to_antx_error_log(
                 modified_file_name, "File identical to original file."
@@ -92,3 +108,6 @@ if __name__ == "__main__":
     verify_antx_modification(
         FILTERED_TM_FOLDER_DIR, FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR
     )
+    # original_text = "ཆོས་ཉམས་ལེན་པ་འི་རིགས་དེ་གཉིས་གཅིག་ཏུ་བརྩིས་པ་ནི།"
+    # modified_text = "ཆོས་ཉམས་ལེན་པའི་རིགས་དེ་གཉིས་གཅིག་ཏུ་བརྩིས་པ་ནི།"
+    # print(get_differences(original_text, modified_text))

@@ -11,6 +11,7 @@ filtered_tokenized_BO_files/
 filtered_tokenized_TM_files/
 filtered_tokenized_cleaned_TM_files/
 final_cleaned_annotated_TM_files/
+upload_test_folder/
 
 # C extensions
 *.so
