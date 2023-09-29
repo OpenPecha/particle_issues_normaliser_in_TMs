@@ -10,6 +10,8 @@ from .config import (
 )
 from .file_utils import count_files_in_folder
 
+character_set_pattern = r"[A-Za-z0-9.,;:(){}\[\]'\"`^1️⃣2️⃣3️⃣]"
+
 
 def antx_annotation_transfer(source_text, target_text):
     annotations = [
