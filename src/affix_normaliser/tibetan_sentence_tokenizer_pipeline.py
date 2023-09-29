@@ -38,14 +38,19 @@ def sentence_tokenize_and_save_in_folder(folder_path: Path, output_folder_path: 
         file_content = remove_key_caps(file_content)
         tokenized_content = sentence_tokenizer_pipeline(file_content)
         # Transfer non tibetan characters that were lost in the tokenization process
-        processed_content = tokenized_content
-        if re.search(character_set_pattern, file_content):
-            processed_content = non_tibetan_chars_annotation_transfer(
-                file_content, tokenized_content
-            )
+        processed_content = transfer_non_tibetan_chars(file_content, tokenized_content)
         output_file_path = Path(output_folder_path) / txt_file.name
         output_file_path.write_text(processed_content, encoding="utf-8")
         counter += 1
+
+
+def transfer_non_tibetan_chars(original_content: str, tokenized_content: str) -> str:
+    processed_content = tokenized_content
+    if re.search(character_set_pattern, original_content):
+        processed_content = non_tibetan_chars_annotation_transfer(
+            original_content, tokenized_content
+        )
+    return processed_content
 
 
 if __name__ == "__main__":
