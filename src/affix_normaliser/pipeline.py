@@ -1,65 +1,45 @@
-from pathlib import Path
-
-from .antx_annotation_transfer import (
-    antx_annotation_transfer,
-    remove_newlines_tabs_spaces,
+from .affix_cleaner import clean_affix_and_save_in_folder
+from .antx_annotation_transfer import annotation_transfer_and_save_in_folder
+from .config import (
+    FILTERED_BO_FOLDER_DIR,
+    FILTERED_TM_FOLDER_DIR,
+    FILTERED_TOKENIZED_BO_FOLDER_DIR,
+    FILTERED_TOKENIZED_CLEANED_TM_FOLDER_DIR,
+    FILTERED_TOKENIZED_TM_FOLDER_DIR,
+    FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR,
 )
-from .config import BO_FOLDER_DIR, TM_FOLDER_DIR
-from .repo_file_downloader import GitHubFileDownloader, download_file_with_url
-from .repo_file_uploader import GitHubFileUploader
 from .settings import GITHUB_TOKEN
-from .tibetan_sentence_tokenizer_pipeline import sentence_tokenizer_pipeline
+from .tibetan_sentence_tokenizer_pipeline import sentence_tokenize_and_save_in_folder
 
 token = GITHUB_TOKEN
 
 
-def pipeline(repo_names_list):
-    repo_owner = "MonlamAI"
+def pipeline():
 
-    for bo_repo_name in repo_names_list:
+    # Tokenizing the TM and BO files
+    # Only TM files with issues and their corresponding BO files are tokenized
+    sentence_tokenize_and_save_in_folder(
+        FILTERED_BO_FOLDER_DIR, FILTERED_TOKENIZED_BO_FOLDER_DIR
+    )
+    sentence_tokenize_and_save_in_folder(
+        FILTERED_TM_FOLDER_DIR, FILTERED_TOKENIZED_TM_FOLDER_DIR
+    )
 
-        # downloading bo.txt file
-        downloader = GitHubFileDownloader(token, repo_owner, bo_repo_name)
-        download_url = downloader.get_txt_file_download_url_from_repo()
-        download_file_with_url(download_url, f"{bo_repo_name}.txt", BO_FOLDER_DIR)
+    # Cleaning the TM files
 
-        # downloading TM..-bo.txt file
-        translation_memory_ID = bo_repo_name[2:6]
-        tm_repo_name = f"TM{translation_memory_ID}"
-        downloader = GitHubFileDownloader(token, repo_owner, tm_repo_name)
-        download_url = downloader.get_txt_file_download_url_from_repo()
-        download_file_with_url(download_url, f"{tm_repo_name}.txt", TM_FOLDER_DIR)
+    clean_affix_and_save_in_folder(
+        FILTERED_TOKENIZED_TM_FOLDER_DIR,
+        FILTERED_TOKENIZED_BO_FOLDER_DIR,
+        FILTERED_TOKENIZED_CLEANED_TM_FOLDER_DIR,
+    )
 
-        # sentence tokenizing the bo.txt content
-        bo_file_path = BO_FOLDER_DIR / f"{bo_repo_name}.txt"
-        bo_file_content = Path(bo_file_path).read_text(encoding="utf-8")
-        bo_file_content_tokenized = sentence_tokenizer_pipeline(bo_file_content)
-        bo_tokenized_file_name = f"{bo_repo_name}_tokenized.txt"
-        tokenized_file_path = BO_FOLDER_DIR / bo_tokenized_file_name
-        tokenized_file_path.write_text(bo_file_content_tokenized, encoding="utf-8")
-
-        # transfering the annotation from TM to BO
-        source_text = (TM_FOLDER_DIR / f"{tm_repo_name}.txt").read_text(
-            encoding="utf-8"
-        )
-        target_text = bo_file_content_tokenized
-        target_text = remove_newlines_tabs_spaces(target_text)
-        AnnotatedText = antx_annotation_transfer(source_text, target_text)
-        new_annotated_file_name = f"{tm_repo_name}_cleaned.txt"
-        new_annotated_file_path = TM_FOLDER_DIR / new_annotated_file_name
-        with open(new_annotated_file_path, "w") as file:
-            for AnnotatedLine in AnnotatedText.splitlines():
-                file.write(f"{AnnotatedLine.strip()}\n")
-
-        # Uploading the new cleaned file
-        repo_owner = "tenzin3"
-        repo_name = "test_repo"
-        uploader = GitHubFileUploader(token, repo_owner, repo_name)
-        file_path = f"TM{translation_memory_ID}-bo.txt"
-        file_data = Path(new_annotated_file_path).read_text(encoding="utf-8")
-        uploader.upload_txt_file(file_path, file_data)
+    # Annotating the TM files
+    annotation_transfer_and_save_in_folder(
+        FILTERED_TM_FOLDER_DIR,
+        FILTERED_TOKENIZED_CLEANED_TM_FOLDER_DIR,
+        FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR,
+    )
 
 
 if __name__ == "__main__":
-    repo_names_list = ["BO0790"]
-    pipeline(repo_names_list)
+    pipeline()
