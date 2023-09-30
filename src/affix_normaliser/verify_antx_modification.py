@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List
+from typing import List, Tuple
 
 from antx.core import get_diffs
 
@@ -28,20 +28,30 @@ def get_differences(source_text: str, target_text: str) -> List[tuple]:
     return list(diffs)
 
 
-def validate_missing_annotation_condition(diffs: List[tuple]) -> bool:
+def validate_missing_annotation_condition(diffs: List[tuple]) -> Tuple[bool, List]:
     missing_annotations = [diff for diff in diffs if diff[0] == -1]
+    valid_missing_annotations = ["་", "", "༌"]
     for missing_annotation in missing_annotations:
-        if missing_annotation[1] not in ["་", ""]:
-            return False
-    return True
+        if missing_annotation[1] not in valid_missing_annotations:
+            return False, [
+                diff
+                for diff in missing_annotations
+                if diff[1] not in valid_missing_annotations
+            ]
+    return True, []
 
 
-def validate_extra_annotation_condition(diffs: List[tuple]) -> bool:
+def validate_extra_annotation_condition(diffs: List[tuple]) -> Tuple[bool, List]:
     extra_annotations = [diff for diff in diffs if diff[0] == 1]
+    validate_extra_annotations = [""]
     for extra_annotation in extra_annotations:
-        if extra_annotation[1] not in [""]:
-            return False
-    return True
+        if extra_annotation[1] not in validate_extra_annotations:
+            return False, [
+                diff
+                for diff in extra_annotations
+                if diff[1] not in validate_extra_annotations
+            ]
+    return True, []
 
 
 def verify_annotation_transfer(
@@ -55,12 +65,20 @@ def verify_annotation_transfer(
         error_annotations = []
         type_of_error = ""
         if extra_annotations:
-            if not validate_extra_annotation_condition(diffs):
-                error_annotations.append(extra_annotations)
+            (
+                isExtraAnnotationValid,
+                unvalid_extra_annotations,
+            ) = validate_extra_annotation_condition(diffs)
+            if not isExtraAnnotationValid:
+                error_annotations.append(unvalid_extra_annotations)
                 type_of_error = "Extra "
         if missing_annotations:
-            if not validate_missing_annotation_condition(diffs):
-                error_annotations.append(missing_annotations)
+            (
+                isMissingAnnotationValid,
+                unvalid_missing_annotations,
+            ) = validate_missing_annotation_condition(diffs)
+            if not isMissingAnnotationValid:
+                error_annotations.append(unvalid_missing_annotations)
                 type_of_error += "Missing "
         if error_annotations:
             write_to_antx_error_log(
