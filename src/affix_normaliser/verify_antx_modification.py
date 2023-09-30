@@ -48,28 +48,29 @@ def verify_annotation_transfer(
     original_text: str, modified_text: str, modified_file_name: str
 ):
     diffs = get_differences(original_text, modified_text)
-    has_extra_annotation = [diff for diff in diffs if diff[0] == 1]
-    if has_extra_annotation:
-        if validate_extra_annotation_condition(diffs):
-            write_to_antx_log(modified_file_name)
-        else:
+    extra_annotations = [diff for diff in diffs if diff[0] == 1]
+    missing_annotations = [diff for diff in diffs if diff[0] == -1]
+
+    if extra_annotations or missing_annotations:
+        error_annotations = []
+        type_of_error = ""
+        if extra_annotations:
+            if not validate_extra_annotation_condition(diffs):
+                error_annotations.append(extra_annotations)
+                type_of_error = "Extra "
+        if missing_annotations:
+            if not validate_missing_annotation_condition(diffs):
+                error_annotations.append(missing_annotations)
+                type_of_error += "Missing "
+        if error_annotations:
             write_to_antx_error_log(
                 modified_file_name,
-                f"Extra annotation found:{has_extra_annotation}",
+                f"{type_of_error} annotations found:{error_annotations}",
             )
-    else:
-        missing_annotation = [diff for diff in diffs if diff[0] == -1]
-        if missing_annotation:
-            if validate_missing_annotation_condition(diffs):
-                write_to_antx_log(modified_file_name)
-            else:
-                write_to_antx_error_log(
-                    modified_file_name, f"Missing annotation found:{missing_annotation}"
-                )
         else:
-            write_to_antx_error_log(
-                modified_file_name, "File identical to original file."
-            )
+            write_to_antx_log(modified_file_name)
+    else:
+        write_to_antx_error_log(modified_file_name, "File identical to original file.")
 
 
 def write_to_antx_log(filename):
