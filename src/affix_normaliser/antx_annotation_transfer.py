@@ -62,11 +62,6 @@ def annotation_transfer_and_save_in_folder(
 
 def add_bo_to_filename(file_name):
     base_name, extension = file_name.split(".")
-
-    # remove version name if exists
-    if "-v" in base_name:
-        base_name = base_name.split("-v")[0]
-    # Add "-bo" to the base name
     new_base_name = base_name + "-bo"
     new_file_name = f"{new_base_name}.{extension}"
 
