@@ -4,7 +4,7 @@ from typing import List
 
 from antx.core import get_diffs
 
-from .config import (  # DATA_FOLDER_DIR
+from .config import (
     FILTERED_TOKENIZED_BO_FOLDER_DIR,
     FILTERED_TOKENIZED_CLEANED_TM_FOLDER_DIR,
     FILTERED_TOKENIZED_TM_FOLDER_DIR,
@@ -15,7 +15,7 @@ from .file_utils import (
     remove_version_number_from_file_name,
 )
 
-affix_issues = ["་འི་", "་ས་", "་ར་", "་འི།", "་ས།", "་ར།"]
+AFFIX_ISSUES = ["་འི་", "་ས་", "་ར་", "་འི།", "་ས།", "་ར།"]
 
 
 def remove_spaces(input_string: str) -> str:
@@ -29,7 +29,7 @@ def filter_tibetan_characters(input_string: str) -> str:
 
 
 def remove_affixes_ignore_first(
-    input_text, affix_issues: List[str] = affix_issues
+    input_text, affix_issues: List[str] = AFFIX_ISSUES
 ) -> str:
     for issue in affix_issues:
         input_text = input_text.replace(issue, issue[1:])
@@ -37,9 +37,10 @@ def remove_affixes_ignore_first(
 
 
 def filter_common_characters(input_text: str, pattern_text: str) -> str:
+    differences = list(get_diffs(input_text, pattern_text))
     common_characters = [
         diff[1]
-        for diff in get_diffs(input_text, pattern_text)
+        for diff in differences
         if diff[0] == 0 or diff[0] == -1 and diff[1] in ["་", "༌"]
     ]
     return "".join(common_characters)
@@ -50,18 +51,18 @@ def learn_and_clean_affixes(input_text: str, pattern_text: str) -> str:
     input_lines = input_text.splitlines()
     pattern_lines = pattern_text.splitlines()
     for input_line in input_lines:
-        matching_affixes = [affix for affix in affix_issues if affix in input_line]
+        matching_affixes = [affix for affix in AFFIX_ISSUES if affix in input_line]
 
         if matching_affixes:
             found_match = False
             for pattern_line in pattern_lines:
                 if remove_affixes_ignore_first(
-                    filter_tibetan_characters(input_line)
+                    filter_tibetan_characters(input_line), matching_affixes
                 ) == remove_affixes_ignore_first(
-                    filter_tibetan_characters(pattern_line)
+                    filter_tibetan_characters(pattern_line), matching_affixes
                 ):
                     filtered_pattern_line = filter_common_characters(
-                        input_line, pattern_text
+                        input_line, pattern_line
                     )
                     output_text += filtered_pattern_line + "\n"
                     found_match = True
