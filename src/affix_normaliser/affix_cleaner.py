@@ -2,6 +2,8 @@ import re
 from pathlib import Path
 from typing import List
 
+from antx.core import get_diffs
+
 from .config import (  # DATA_FOLDER_DIR
     FILTERED_TOKENIZED_BO_FOLDER_DIR,
     FILTERED_TOKENIZED_CLEANED_TM_FOLDER_DIR,
@@ -34,6 +36,15 @@ def remove_affixes_ignore_first(
     return input_text
 
 
+def filter_common_characters(input_text: str, pattern_text: str) -> str:
+    common_characters = [
+        diff[1]
+        for diff in get_diffs(input_text, pattern_text)
+        if diff[0] == 0 or diff[0] == -1 and diff[1] in ["་", "༌"]
+    ]
+    return "".join(common_characters)
+
+
 def learn_and_clean_affixes(input_text: str, pattern_text: str) -> str:
     output_text = ""
     input_lines = input_text.splitlines()
@@ -49,7 +60,10 @@ def learn_and_clean_affixes(input_text: str, pattern_text: str) -> str:
                 ) == remove_affixes_ignore_first(
                     filter_tibetan_characters(pattern_line)
                 ):
-                    output_text += pattern_line + "\n"
+                    filtered_pattern_line = filter_common_characters(
+                        input_line, pattern_text
+                    )
+                    output_text += filtered_pattern_line + "\n"
                     found_match = True
                     break
             if not found_match:
