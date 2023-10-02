@@ -10,7 +10,7 @@ from .config import (
 )
 from .file_utils import count_files_in_folder
 
-character_set_pattern = r"[A-Za-z0-9.,;:(){}\[\]'\"`^1️⃣2️⃣3️⃣]"
+NON_TIBETAN_CHARS = r"([A-Za-z0-9.,;:(){}\[\]'`\"\\\-—?%*&^]+)"
 
 
 def antx_annotation_transfer(source_text, target_text):
@@ -29,7 +29,7 @@ def antx_annotation_transfer(source_text, target_text):
 
 def non_tibetan_chars_annotation_transfer(source_text, target_text):
     annotations = [
-        ["non_tibetan_chars", r"([A-Za-z0-9.,;:(){}\[\]'\"`]+)"],
+        ["non_tibetan_chars", NON_TIBETAN_CHARS],
         ["tab", r"(\t)"],
         ["new_line", r"(\n)"],
         ["space_line", r"(\s+)"],
