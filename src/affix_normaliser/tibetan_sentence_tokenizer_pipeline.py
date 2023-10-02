@@ -4,7 +4,7 @@ from pathlib import Path
 from op_mt_tools.tokenizers import bo_sent_tokenizer as sentence_tokenizer
 
 from .antx_annotation_transfer import (
-    character_set_pattern,
+    NON_TIBETAN_CHARS,
     non_tibetan_chars_annotation_transfer,
 )
 from .config import (
@@ -46,7 +46,7 @@ def sentence_tokenize_and_save_in_folder(folder_path: Path, output_folder_path: 
 
 def transfer_non_tibetan_chars(original_content: str, tokenized_content: str) -> str:
     processed_content = tokenized_content
-    if re.search(character_set_pattern, original_content):
+    if re.search(NON_TIBETAN_CHARS, original_content):
         processed_content = non_tibetan_chars_annotation_transfer(
             original_content, tokenized_content
         )
