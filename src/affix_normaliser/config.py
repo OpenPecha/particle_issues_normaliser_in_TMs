@@ -18,4 +18,6 @@ FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR = (
 )
 ALL_TM_FOLDER_DIR = DATA_FOLDER_DIR / "all_TM_files"
 
+TEST_DIR = DATA_FOLDER_DIR / "test_folder"
+
 AFFIX_ISSUES = ["་འི་", "་ས་", "་ར་", "་འི།", "་ས།", "་ར།"]
