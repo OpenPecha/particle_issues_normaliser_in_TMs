@@ -127,7 +127,9 @@ def write_to_error_log(error_log_file, filename):
 if __name__ == "__main__":
     # Usage example
     tm_files = (
-        Path(DATA_FOLDER_DIR / "TM_files_with_issues.txt").read_text().split("\n")
+        Path(DATA_FOLDER_DIR / "TM_files_with_issues.txt")
+        .read_text(encoding="utf-8")
+        .split("\n")
     )
     all_tm_files_path = Path(DATA_FOLDER_DIR) / "all_TM_files"
     filtered_bo_files_path = Path(DATA_FOLDER_DIR) / "filtered_BO_files"

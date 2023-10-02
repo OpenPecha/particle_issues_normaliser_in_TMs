@@ -11,7 +11,7 @@ def filter_empty_elements_from_list(input_list: List[str]) -> List[str]:
 
 
 def extract_content_from_file(file_path: Path) -> List[str]:
-    extracted_content = Path(file_path).read_text().split("\n")
+    extracted_content = Path(file_path).read_text(encoding="utf-8").split("\n")
     extracted_content = filter_empty_elements_from_list(extracted_content)
     extracted_content = [
         file_name_without_txt(file_name) for file_name in extracted_content

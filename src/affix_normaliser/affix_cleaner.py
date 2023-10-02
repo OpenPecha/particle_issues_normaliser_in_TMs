@@ -38,11 +38,7 @@ def remove_affixes_ignore_first(
 
 def filter_common_characters(input_text: str, pattern_text: str) -> str:
     differences = list(get_diffs(input_text, pattern_text))
-    common_characters = [
-        diff[1]
-        for diff in differences
-        if diff[0] == 0 or diff[0] == -1 and diff[1] in ["་", "༌"]
-    ]
+    common_characters = [diff[1] for diff in differences if diff[0] == 0]
     return "".join(common_characters)
 
 
@@ -94,9 +90,9 @@ def clean_affix_and_save_in_folder(
         if pattern_file_path.exists():
             pattern_content = pattern_file_path.read_text(encoding="utf-8")
             cleaned_content = learn_and_clean_affixes(file_content, pattern_content)
-            output_file_path.write_text(cleaned_content)
+            output_file_path.write_text(cleaned_content, encoding="utf-8")
         else:
-            output_file_path.write_text(file_content)
+            output_file_path.write_text(file_content, encoding="utf-8")
         counter += 1
 
 

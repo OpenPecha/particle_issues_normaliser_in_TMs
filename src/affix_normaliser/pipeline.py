@@ -73,7 +73,7 @@ def test_tokenize_individual_file(tm_file_name: str):
     tm_text = remove_key_caps(tm_text)
     tokenized_tm_text = sentence_tokenizer_pipeline(tm_text)
     tokenized_tm_text = transfer_non_tibetan_chars(tm_text, tokenized_tm_text)
-    Path(TEST_DIR / f"t_{tm_file_name}").write_text(tokenized_tm_text)
+    Path(TEST_DIR / f"t_{tm_file_name}").write_text(tokenized_tm_text, encoding="utf-8")
 
     tm_repo_name = file_name_without_txt(tm_file_name)
     bo_repo_name = f"BO{tm_repo_name[2:]}"
@@ -88,7 +88,7 @@ def test_tokenize_individual_file(tm_file_name: str):
     bo_text = remove_key_caps(bo_text)
     tokenized_bo_text = sentence_tokenizer_pipeline(bo_text)
     tokenized_bo_text = transfer_non_tibetan_chars(bo_text, tokenized_bo_text)
-    Path(TEST_DIR / f"t_{bo_file_name}").write_text(tokenized_bo_text)
+    Path(TEST_DIR / f"t_{bo_file_name}").write_text(tokenized_bo_text, encoding="utf-8")
 
 
 def test_clean_affixes_individual_file(tm_file_name: str):
@@ -101,7 +101,7 @@ def test_clean_affixes_individual_file(tm_file_name: str):
 
     bo_text = Path(TEST_DIR / f"t_{bo_file_name}").read_text(encoding="utf-8")
     cleaned_tm_text = learn_and_clean_affixes(tm_text, bo_text)
-    Path(TEST_DIR / f"c_{tm_file_name}").write_text(cleaned_tm_text)
+    Path(TEST_DIR / f"c_{tm_file_name}").write_text(cleaned_tm_text, encoding="utf-8")
 
 
 def test_annotate_individual_file(tm_file_name: str):
@@ -110,33 +110,33 @@ def test_annotate_individual_file(tm_file_name: str):
     )
     target_text = Path(TEST_DIR / f"c_{tm_file_name}").read_text(encoding="utf-8")
     annotated_text = antx_annotation_transfer(source_text, target_text)
-    Path(TEST_DIR / f"a_{tm_file_name}").write_text(annotated_text)
+    Path(TEST_DIR / f"a_{tm_file_name}").write_text(annotated_text, encoding="utf-8")
 
 
 def test_individual_file(file_name: str):
-    # test_tokenize_individual_file(file_name)
-    # test_clean_affixes_individual_file(file_name)
-    # test_annotate_individual_file(file_name)
+    test_tokenize_individual_file(file_name)
+    test_clean_affixes_individual_file(file_name)
+    test_annotate_individual_file(file_name)
     differences = list(
         get_diffs(
-            Path(FILTERED_TM_FOLDER_DIR / file_name).read_text(encoding="utf-8"),
+            Path(TEST_DIR / file_name).read_text(encoding="utf-8"),
             Path(TEST_DIR / f"a_{file_name}").read_text(encoding="utf-8"),
         )
     )
     (
         has_valid_missing_annotations,
-        unvalid_missing_annotations,
+        invalid_missing_annotations,
     ) = validate_missing_annotation_condition(differences)
     (
         has_valid_extra_annotations,
-        unvalid_extra_annotations,
+        invalid_extra_annotations,
     ) = validate_extra_annotation_condition(differences)
 
     if not has_valid_missing_annotations:
-        print(unvalid_missing_annotations)
+        print(invalid_missing_annotations)
     if not has_valid_extra_annotations:
-        print(unvalid_extra_annotations)
+        print(invalid_extra_annotations)
 
 
 if __name__ == "__main__":
-    test_individual_file("TM2971.txt")
+    test_individual_file("TM0718.txt")

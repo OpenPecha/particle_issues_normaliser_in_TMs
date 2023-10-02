@@ -65,8 +65,8 @@ if __name__ == "__main__":
     print(f"No of filtered TM files with issues: {len(files_with_issues)}")
     print(f"No of filtered TM files without issues: {len(files_without_issues)}")
     Path(DATA_FOLDER_DIR / "TM_files_with_issues.txt").write_text(
-        "\n".join(files_with_issues)
+        "\n".join(files_with_issues), encoding="utf-8"
     )
     Path(DATA_FOLDER_DIR / "TM_files_without_issues.txt").write_text(
-        "\n".join(files_without_issues)
+        "\n".join(files_without_issues), encoding="utf-8"
     )
