@@ -1,5 +1,7 @@
+import csv
 import shutil
 from pathlib import Path
+from typing import List
 
 from antx.core import get_diffs
 
@@ -103,9 +105,9 @@ def test_annotate_individual_file(tm_file_name: str):
 
 
 def test_individual_file(file_name: str):
-    test_tokenize_individual_file(file_name)
-    test_clean_affixes_individual_file(file_name)
-    test_annotate_individual_file(file_name)
+    # test_tokenize_individual_file(file_name)
+    # test_clean_affixes_individual_file(file_name)
+    # test_annotate_individual_file(file_name)
     annotated_file_content = Path(TEST_DIR / f"a_{file_name}").read_text(
         encoding="utf-8"
     )
@@ -132,6 +134,22 @@ def test_individual_file(file_name: str):
     initial_affix_counts = count_affix_in_string(original_file_content)
     print(initial_affix_counts)
 
+    affix_counts_values: List = []
+    affix_counts_values.extend(
+        [f"{key}: ", f"{value1:<6}", f"{value2:<6}"]
+        for key, value1, value2 in zip(
+            affix_counts.keys(),
+            affix_counts.values(),
+            initial_affix_counts.values(),
+        )
+    )
+    data = [f"{file_name}"] + affix_counts_values
+    # Write the data to a CSV file
+    output_file = Path(TEST_DIR / "affix_counts.tsv")
+    with open(output_file, mode="w", newline="") as csv_file:
+        writer = csv.writer(csv_file, delimiter="\t")
+        writer.writerows(data)
+
 
 if __name__ == "__main__":
-    test_individual_file("TM0791.txt")
+    test_individual_file("TM4707.txt")
