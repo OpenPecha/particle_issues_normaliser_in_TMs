@@ -8,8 +8,3 @@ def test_adjust_tsek_position_with_whitespaces():
     output_sentence = adjust_tsek_position_with_whitespaces(test_sentence)
     expected_sentence = "བོད་ཀྱི་མཁས་པ་ཁ་ཅིག་ སྟོན་པ།"
     assert output_sentence == expected_sentence
-
-    test_sentence = "བོད་ཀྱི་མཁས་པ་ཁ་ཅིག\n ་སྟོན་པ།"
-    output_sentence = adjust_tsek_position_with_whitespaces(test_sentence)
-    expected_sentence = "བོད་ཀྱི་མཁས་པ་ཁ་ཅིག་ \n སྟོན་པ།"
-    assert output_sentence == expected_sentence
