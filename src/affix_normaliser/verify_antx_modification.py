@@ -29,22 +29,29 @@ def empty_antx_log_files():
         error_log_file_path.unlink()
 
 
+def count_affix_in_string(file_content: str):
+    affix_counts = OrderedDict((affix, 0) for affix in AFFIX_ISSUES)
+    for affix in AFFIX_ISSUES:
+        affix_counts[affix] = file_content.count(affix)
+    return affix_counts
+
+
 def count_affix_in_files(folder_path: Path, comparison_folder_path: Path):
     txt_files = folder_path.glob("*.txt")
     data = []
 
     for txt_file in txt_files:
-        affix_counts = OrderedDict((affix, 0) for affix in AFFIX_ISSUES)
-        initial_affix_counts = OrderedDict((affix, 0) for affix in AFFIX_ISSUES)
+
         file_content = txt_file.read_text(encoding="utf-8")
         file_name_with_issues = filter_hyphen_bo(txt_file.name)
         file_content_with_issues = Path(
             comparison_folder_path / file_name_with_issues
         ).read_text(encoding="utf-8")
+
+        affix_counts = count_affix_in_string(file_content)
+        initial_affix_counts = count_affix_in_string(file_content_with_issues)
+
         affix_counts_values: List = []
-        for affix in AFFIX_ISSUES:
-            affix_counts[affix] = file_content.count(affix)
-            initial_affix_counts[affix] = file_content_with_issues.count(affix)
 
         affix_counts_values.extend(
             [f"{value1:<6}", f"{value2:<6}"]
