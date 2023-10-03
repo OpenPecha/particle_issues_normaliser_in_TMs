@@ -13,14 +13,16 @@ from .file_utils import count_files_in_folder
 ANTX_ERROR_LOG_FILE = "antx_annotation_transfer_error_log.txt"
 ANTX_LOG_FILE = "antx_annotation_transfer_log.txt"
 
-log_file_path = DATA_FOLDER_DIR / ANTX_LOG_FILE
-error_log_file_path = DATA_FOLDER_DIR / ANTX_ERROR_LOG_FILE
 
-# Clear the log files if they exist
-if log_file_path.exists():
-    log_file_path.unlink()
-if error_log_file_path.exists():
-    error_log_file_path.unlink()
+def empty_antx_log_files():
+    log_file_path = DATA_FOLDER_DIR / ANTX_LOG_FILE
+    error_log_file_path = DATA_FOLDER_DIR / ANTX_ERROR_LOG_FILE
+
+    # Clear the log files if they exist
+    if log_file_path.exists():
+        log_file_path.unlink()
+    if error_log_file_path.exists():
+        error_log_file_path.unlink()
 
 
 def get_differences(source_text: str, target_text: str) -> List[tuple]:
@@ -111,6 +113,8 @@ def verify_antx_modification(original_folder_path: Path, modified_folder_path: P
     txt_files = modified_folder_path.glob("*.txt")
     file_count = count_files_in_folder(modified_folder_path)
     counter = 1
+    # Empyting the log files
+    empty_antx_log_files()
 
     for txt_file in txt_files:
         print(f"[{counter}/{file_count}]] File {txt_file.name}...")
