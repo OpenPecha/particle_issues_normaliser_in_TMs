@@ -57,6 +57,14 @@ def remove_version_number_from_file_name(file_name: str) -> str:
     return file_name
 
 
+def convert_tm_file_name_to_bo_file_name(tm_file_name: str) -> str:
+    tm_repo_name = file_name_without_txt(tm_file_name)
+    bo_repo_name = f"BO{tm_repo_name[2:]}"
+    bo_repo_name = remove_version_number_from_file_name(bo_repo_name)
+    bo_file_name = f"{bo_repo_name}.txt"
+    return bo_file_name
+
+
 def copy_files(file_list: List[str], source_folder: Path, destination_folder: Path):
     try:
         source_path = Path(source_folder)

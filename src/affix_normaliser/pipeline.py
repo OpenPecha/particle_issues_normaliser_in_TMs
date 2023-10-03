@@ -3,12 +3,7 @@ from pathlib import Path
 
 from antx.core import get_diffs
 
-from .affix_cleaner import (
-    clean_affix_and_save_in_folder,
-    file_name_without_txt,
-    learn_and_clean_affixes,
-    remove_version_number_from_file_name,
-)
+from .affix_cleaner import clean_affix_and_save_in_folder, learn_and_clean_affixes
 from .antx_annotation_transfer import (
     annotation_transfer_and_save_in_folder,
     antx_annotation_transfer,
@@ -22,6 +17,7 @@ from .config import (
     FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR,
     TEST_DIR,
 )
+from .file_utils import convert_tm_file_name_to_bo_file_name
 from .settings import GITHUB_TOKEN
 from .tibetan_sentence_tokenizer_pipeline import (
     remove_key_caps,
@@ -29,6 +25,7 @@ from .tibetan_sentence_tokenizer_pipeline import (
     transfer_non_tibetan_chars,
 )
 from .verify_antx_modification import (
+    count_affix_in_string,
     validate_extra_annotation_condition,
     validate_missing_annotation_condition,
 )
@@ -75,10 +72,7 @@ def test_tokenize_individual_file(tm_file_name: str):
     tokenized_tm_text = transfer_non_tibetan_chars(tm_text, tokenized_tm_text)
     Path(TEST_DIR / f"t_{tm_file_name}").write_text(tokenized_tm_text, encoding="utf-8")
 
-    tm_repo_name = file_name_without_txt(tm_file_name)
-    bo_repo_name = f"BO{tm_repo_name[2:]}"
-    bo_repo_name = remove_version_number_from_file_name(bo_repo_name)
-    bo_file_name = f"{bo_repo_name}.txt"
+    bo_file_name = convert_tm_file_name_to_bo_file_name(tm_file_name)
 
     bo_file_path = Path(FILTERED_BO_FOLDER_DIR / bo_file_name)
     # Copy the file
@@ -93,12 +87,7 @@ def test_tokenize_individual_file(tm_file_name: str):
 
 def test_clean_affixes_individual_file(tm_file_name: str):
     tm_text = Path(TEST_DIR / f"t_{tm_file_name}").read_text(encoding="utf-8")
-
-    tm_repo_name = file_name_without_txt(tm_file_name)
-    bo_repo_name = f"BO{tm_repo_name[2:]}"
-    bo_repo_name = remove_version_number_from_file_name(bo_repo_name)
-    bo_file_name = f"{bo_repo_name}.txt"
-
+    bo_file_name = convert_tm_file_name_to_bo_file_name(tm_file_name)
     bo_text = Path(TEST_DIR / f"t_{bo_file_name}").read_text(encoding="utf-8")
     cleaned_tm_text = learn_and_clean_affixes(tm_text, bo_text)
     Path(TEST_DIR / f"c_{tm_file_name}").write_text(cleaned_tm_text, encoding="utf-8")
@@ -117,12 +106,12 @@ def test_individual_file(file_name: str):
     test_tokenize_individual_file(file_name)
     test_clean_affixes_individual_file(file_name)
     test_annotate_individual_file(file_name)
-    differences = list(
-        get_diffs(
-            Path(TEST_DIR / file_name).read_text(encoding="utf-8"),
-            Path(TEST_DIR / f"a_{file_name}").read_text(encoding="utf-8"),
-        )
+    annotated_file_content = Path(TEST_DIR / f"a_{file_name}").read_text(
+        encoding="utf-8"
     )
+    original_file_content = Path(TEST_DIR / file_name).read_text(encoding="utf-8")
+    differences = list(get_diffs(original_file_content, annotated_file_content))
+
     (
         has_valid_missing_annotations,
         invalid_missing_annotations,
@@ -137,6 +126,12 @@ def test_individual_file(file_name: str):
     if not has_valid_extra_annotations:
         print(invalid_extra_annotations)
 
+    affix_counts = count_affix_in_string(annotated_file_content)
+    print(affix_counts)
+
+    initial_affix_counts = count_affix_in_string(original_file_content)
+    print(initial_affix_counts)
+
 
 if __name__ == "__main__":
-    test_individual_file("TM0718.txt")
+    test_individual_file("TM0791.txt")
