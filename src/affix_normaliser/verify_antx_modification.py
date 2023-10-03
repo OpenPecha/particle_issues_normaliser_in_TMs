@@ -1,11 +1,15 @@
+import csv
+from collections import OrderedDict
 from pathlib import Path
 from typing import List, Tuple
 
 from antx.core import get_diffs
 
+from .config import FILTERED_TM_FOLDER_DIR  # noqa
 from .config import (
+    AFFIX_ISSUES,
     DATA_FOLDER_DIR,
-    FILTERED_TM_FOLDER_DIR,
+    FILTERED_TOKENIZED_TM_FOLDER_DIR,
     FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR,
 )
 from .file_utils import count_files_in_folder
@@ -23,6 +27,44 @@ def empty_antx_log_files():
         log_file_path.unlink()
     if error_log_file_path.exists():
         error_log_file_path.unlink()
+
+
+def count_affix_in_files(folder_path: Path, comparison_folder_path: Path):
+    txt_files = folder_path.glob("*.txt")
+    data = []
+
+    for txt_file in txt_files:
+        affix_counts = OrderedDict((affix, 0) for affix in AFFIX_ISSUES)
+        initial_affix_counts = OrderedDict((affix, 0) for affix in AFFIX_ISSUES)
+        file_content = txt_file.read_text(encoding="utf-8")
+        file_name_with_issues = filter_hyphen_bo(txt_file.name)
+        file_content_with_issues = Path(
+            comparison_folder_path / file_name_with_issues
+        ).read_text(encoding="utf-8")
+        affix_counts_values: List = []
+        for affix in AFFIX_ISSUES:
+            affix_counts[affix] = file_content.count(affix)
+            initial_affix_counts[affix] = file_content_with_issues.count(affix)
+
+        affix_counts_values.extend(
+            [f"{value1:<6}", f"{value2:<6}"]
+            for value1, value2 in zip(
+                affix_counts.values(), initial_affix_counts.values()
+            )
+        )
+        data.append([f"{txt_file.name:<30}"] + affix_counts_values)
+
+    # Write the data to a CSV file
+    output_file = Path(DATA_FOLDER_DIR / "affix_counts_in_TMs.tsv")
+    with open(output_file, mode="w", newline="") as csv_file:
+        writer = csv.writer(csv_file, delimiter="\t")
+        file_name_header = "File Name"
+        affix_headers: List = []
+        affix_headers.extend(
+            [f"{affix:<6}", f"{affix}_original"] for affix in AFFIX_ISSUES
+        )
+        writer.writerow([f"{file_name_header:<30}"] + affix_headers)
+        writer.writerows(data)
 
 
 def get_differences(source_text: str, target_text: str) -> List[tuple]:
@@ -128,9 +170,9 @@ def verify_antx_modification(original_folder_path: Path, modified_folder_path: P
 
 
 if __name__ == "__main__":
-    verify_antx_modification(
-        FILTERED_TM_FOLDER_DIR, FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR
+    # verify_antx_modification(
+    #     FILTERED_TM_FOLDER_DIR, FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR
+    # )
+    count_affix_in_files(
+        FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR, FILTERED_TOKENIZED_TM_FOLDER_DIR
     )
-    # original_text = "ཆོས་ཉམས་ལེན་པ་འི་རིགས་དེ་གཉིས་གཅིག་ཏུ་བརྩིས་པ་ནི།"
-    # modified_text = "ཆོས་ཉམས་ལེན་པའི་རིགས་དེ་གཉིས་གཅིག་ཏུ་བརྩིས་པ་ནི།"
-    # print(get_differences(original_text, modified_text))
