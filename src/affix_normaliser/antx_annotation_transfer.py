@@ -8,6 +8,7 @@ from .config import (
     FILTERED_TOKENIZED_CLEANED_TM_FOLDER_DIR,
     FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR,
 )
+from .data_post_processor import adjust_tsek_position_with_whitespaces
 from .file_utils import count_files_in_folder
 
 NON_TIBETAN_CHARS = r"([A-Za-z0-9.,;:(){}\[\]'`\"\\\-—?%*&^]+)"
@@ -24,6 +25,7 @@ def antx_annotation_transfer(source_text, target_text):
     ]
     target_text = remove_newlines_tabs_spaces(target_text)
     annotated_text = transfer(source_text, annotations, target_text, output="txt")
+    annotated_text = adjust_tsek_position_with_whitespaces(annotated_text)
     return annotated_text
 
 
