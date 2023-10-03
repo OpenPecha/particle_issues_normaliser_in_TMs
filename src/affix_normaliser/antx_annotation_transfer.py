@@ -29,14 +29,10 @@ def antx_annotation_transfer(source_text, target_text):
 
 def non_tibetan_chars_annotation_transfer(source_text, target_text):
     annotations = [
-        ["non_tibetan_chars", NON_TIBETAN_CHARS],
-        ["tab", r"(\t)"],
-        ["new_line", r"(\n)"],
-        ["space_line", r"(\s+)"],
+        ["non_tibetan_chars", r"(\s*[A-Za-z0-9.,;:(){}\[\]'`\"\\\-—?%*&^]+\s*)"],
     ]
 
     source_text = source_text.replace("1️⃣", "").replace("2️⃣", "").replace("3️⃣", "")
-    target_text = remove_newlines_tabs_spaces(target_text)
     annotated_text = transfer(source_text, annotations, target_text, output="txt")
     return annotated_text
 
