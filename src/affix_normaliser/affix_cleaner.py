@@ -5,6 +5,7 @@ from typing import List
 from antx.core import get_diffs
 
 from .config import (
+    AFFIX_ISSUES,
     FILTERED_TOKENIZED_BO_FOLDER_DIR,
     FILTERED_TOKENIZED_CLEANED_TM_FOLDER_DIR,
     FILTERED_TOKENIZED_TM_FOLDER_DIR,
@@ -14,8 +15,6 @@ from .file_utils import (
     file_name_without_txt,
     remove_version_number_from_file_name,
 )
-
-AFFIX_ISSUES = ["་འི་", "་ས་", "་ར་", "་འི།", "་ས།", "་ར།"]
 
 
 def remove_spaces(input_string: str) -> str:

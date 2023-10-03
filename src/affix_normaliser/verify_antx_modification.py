@@ -54,23 +54,20 @@ def count_affix_in_files(folder_path: Path, comparison_folder_path: Path):
         affix_counts_values: List = []
 
         affix_counts_values.extend(
-            [f"{value1:<6}", f"{value2:<6}"]
-            for value1, value2 in zip(
-                affix_counts.values(), initial_affix_counts.values()
+            [f"{key}: ", f"{value1:<6}", f"{value2:<6}"]
+            for key, value1, value2 in zip(
+                affix_counts.keys(),
+                affix_counts.values(),
+                initial_affix_counts.values(),
             )
         )
+
         data.append([f"{txt_file.name:<30}"] + affix_counts_values)
 
     # Write the data to a CSV file
     output_file = Path(DATA_FOLDER_DIR / "affix_counts_in_TMs.tsv")
     with open(output_file, mode="w", newline="") as csv_file:
         writer = csv.writer(csv_file, delimiter="\t")
-        file_name_header = "File Name"
-        affix_headers: List = []
-        affix_headers.extend(
-            [f"{affix:<6}", f"{affix}_original"] for affix in AFFIX_ISSUES
-        )
-        writer.writerow([f"{file_name_header:<30}"] + affix_headers)
         writer.writerows(data)
 
 
