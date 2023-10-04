@@ -61,3 +61,28 @@ Like wise for  TM0701-v4 and TM0701 are segmented from BO0701.
 ## filtered_TM_files Folder
 
 Folder to TM files with issues.
+
+## antx_annotation_transfer_log.txt
+
+List of TM names that were annotated correctly.
+
+## antx_annotattion_transfer_error_log.txt
+
+List of TM names that had i. Extra annotations ii. Missing annotations comparing with the initial downloaded tm file. It also contains names of the name that were not changed in this whole cleaning and annotation process.
+
+## affix_counts_in_TMs.tsv
+
+Contains Tm with their affix counts in list. first element contains the affix name, affix count of the cleaned file, then afffix count initially.
+TM0781-bo.txt    ['་འི་: ', '0     ', '480   '] ['་ར་: ', '26    ', '212   '].
+
+## affix_reduced_file_names.txt
+
+List of TM file names where its affix is reduced after this cleaning and annotation process.
+Count = 757 files. (file that will be upload.)
+
+## affix_reduced_file_but_with_error.txt
+
+Contain TM name with their errors if their affix is reduced. Errors occured due to the presence of
+tibetan grammatical errors or absolute exceptions (which were cleaned by 'bo_sent_tokenizer' from mt-tools).
+
+Example: བོད་ཀྱི་མཁས་པ་ཁ་ཅིག སྟོན་པ། (no tsek after ག), སྤྱིར་བཏང་ནང་ལ་གནས་ཚུལ་ཨུམ་ཨུམ་་་། (multiple tsek before shad)

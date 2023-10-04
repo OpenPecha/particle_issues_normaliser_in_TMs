@@ -62,7 +62,7 @@ def count_affix_in_files(folder_path: Path, comparison_folder_path: Path):
         affix_counts_values: List = []
 
         affix_counts_values.extend(
-            [f"{key}: ", f"{value1:<6}", f"{value2:<6}"]
+            [f"{key}: ", f"{value1:<4}", f"{value2:<4}"]
             for key, value1, value2 in zip(
                 affix_counts.keys(),
                 affix_counts.values(),
@@ -215,10 +215,13 @@ if __name__ == "__main__":
     # verify_antx_modification(
     #     FILTERED_TM_FOLDER_DIR, FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR
     # )
-    write_affix_reduced_file_names(
-        FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR, FILTERED_TOKENIZED_TM_FOLDER_DIR
-    )
+    # write_affix_reduced_file_names(
+    #     FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR, FILTERED_TOKENIZED_TM_FOLDER_DIR
+    # )
 
-    write_affix_reduced_file_names_but_with_error(
+    # write_affix_reduced_file_names_but_with_error(
+    #     FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR, FILTERED_TOKENIZED_TM_FOLDER_DIR
+    # )
+    count_affix_in_files(
         FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR, FILTERED_TOKENIZED_TM_FOLDER_DIR
     )
