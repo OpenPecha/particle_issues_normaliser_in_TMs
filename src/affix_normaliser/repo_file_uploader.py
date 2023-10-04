@@ -5,7 +5,6 @@ from github import Github
 from retrying import retry
 
 from .config import DATA_FOLDER_DIR
-from .file_utils import count_files_in_folder
 from .settings import GITHUB_TOKEN
 
 TOKEN = GITHUB_TOKEN
@@ -56,10 +55,18 @@ class GitHubFileUploader:
 
 def upload_files_in_folder_to_repo(folder_path: Path):
     txt_files = folder_path.glob("*.txt")
-    file_count = count_files_in_folder(folder_path)
     counter = 1
+    affix_reduced_file_names = (
+        Path(DATA_FOLDER_DIR / "affix_reduced_file_names.txt")
+        .read_text(encoding="utf-8")
+        .split("\n")
+    )
+    affix_reduced_file_names = [item for item in affix_reduced_file_names if item]
+    file_count = len(affix_reduced_file_names)
 
     for txt_file in txt_files:
+        if txt_file.name not in affix_reduced_file_names:
+            continue
         print(f"[{counter}/{file_count}]] File {txt_file.name} Uploading...")
         repo_name = remove_hyphen_bo_from_file_name(txt_file.name)
         uploader = GitHubFileUploader(TOKEN, REPO_OWNER, repo_name)
