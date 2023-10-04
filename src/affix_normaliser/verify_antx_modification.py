@@ -40,6 +40,7 @@ def count_affix_in_files(folder_path: Path, comparison_folder_path: Path):
     txt_files = folder_path.glob("*.txt")
     data = []
 
+    affix_reduced_file_names = []
     for txt_file in txt_files:
 
         file_content = txt_file.read_text(encoding="utf-8")
@@ -50,6 +51,13 @@ def count_affix_in_files(folder_path: Path, comparison_folder_path: Path):
 
         affix_counts = count_affix_in_string(file_content)
         initial_affix_counts = count_affix_in_string(file_content_with_issues)
+
+        affix_difference = 0
+        for value1, value2 in zip(affix_counts.values(), initial_affix_counts.values()):
+            affix_difference += value2 - value1
+
+        if affix_difference > 0:
+            affix_reduced_file_names.append(txt_file.name)
 
         affix_counts_values: List = []
 
@@ -69,6 +77,7 @@ def count_affix_in_files(folder_path: Path, comparison_folder_path: Path):
     with open(output_file, mode="w", newline="") as csv_file:
         writer = csv.writer(csv_file, delimiter="\t")
         writer.writerows(data)
+    return affix_reduced_file_names
 
 
 def get_differences(source_text: str, target_text: str) -> List[tuple]:
@@ -173,10 +182,43 @@ def verify_antx_modification(original_folder_path: Path, modified_folder_path: P
         counter += 1
 
 
+def write_affix_reduced_file_names(folder_path: Path, comparison_folder_path: Path):
+    file_names = count_affix_in_files(folder_path, comparison_folder_path)
+
+    Path(DATA_FOLDER_DIR / "affix_reduced_file_names.txt").write_text(
+        "\n".join(file_names), encoding="utf-8"
+    )
+
+
+def write_affix_reduced_file_names_but_with_error(
+    folder_path: Path, comparison_folder_path: Path
+):
+    file_names = count_affix_in_files(folder_path, comparison_folder_path)
+
+    error_file_path = DATA_FOLDER_DIR / "antx_annotation_transfer_error_log.txt"
+    output_file_path = DATA_FOLDER_DIR / "affix_reduced_file_names_but_with_error.txt"
+    error_file_content = error_file_path.read_text(encoding="utf-8")
+
+    file_names = count_affix_in_files(
+        FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR, FILTERED_TOKENIZED_TM_FOLDER_DIR
+    )
+    with open(output_file_path, "w", encoding="utf-8") as output_file:
+        for file_name in file_names:
+            if file_name in error_file_content:
+                lines = error_file_content.split("\n")
+                for line in lines:
+                    if file_name in line:
+                        output_file.write(line + "\n")
+
+
 if __name__ == "__main__":
     # verify_antx_modification(
     #     FILTERED_TM_FOLDER_DIR, FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR
     # )
-    count_affix_in_files(
+    write_affix_reduced_file_names(
+        FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR, FILTERED_TOKENIZED_TM_FOLDER_DIR
+    )
+
+    write_affix_reduced_file_names_but_with_error(
         FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR, FILTERED_TOKENIZED_TM_FOLDER_DIR
     )
