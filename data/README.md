@@ -85,4 +85,4 @@ Count = 757 files. (file that will be upload.)
 Contain TM name with their errors if their affix is reduced. Errors occured due to the presence of
 tibetan grammatical errors or absolute exceptions (which were cleaned by 'bo_sent_tokenizer' from mt-tools).
 
-Example: བོད་ཀྱི་མཁས་པ་ཁ་ཅིག སྟོན་པ། (no tsek after ག), སྤྱིར་བཏང་ནང་ལ་གནས་ཚུལ་ཨུམ་ཨུམ་་་། (multiple tsek before shad)
+Example: བོད་ཀྱི་མཁས་པ་ཁ་ཅིག སྟོན་པ། (no tsek after ག, this problem has been solved with data_post_processor.py), སྤྱིར་བཏང་ནང་ལ་གནས་ཚུལ་ཨུམ་ཨུམ་་་། (multiple tsek before shad)

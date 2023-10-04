@@ -42,7 +42,7 @@ class GitHubFileUploader:
         current_sha = self.get_file_sha(file_name)
 
         # Specify the commit message
-        commit_message = "Clean affix issues"
+        commit_message = "clean affixes"
 
         if current_sha:
             # File exists, update it
