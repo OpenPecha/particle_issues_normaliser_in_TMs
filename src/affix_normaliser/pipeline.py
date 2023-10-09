@@ -1,16 +1,21 @@
 import csv
+import os
 import shutil
 from pathlib import Path
 from typing import List
 
 from antx.core import get_diffs
 
+from .affix_checker import identify_files_with_affix_issues
 from .affix_cleaner import clean_affix_and_save_in_folder, learn_and_clean_affixes
 from .antx_annotation_transfer import (
     annotation_transfer_and_save_in_folder,
     antx_annotation_transfer,
 )
 from .config import (
+    AFFIX_ISSUES,
+    ALL_TM_FOLDER_DIR,
+    DATA_FOLDER_DIR,
     FILTERED_BO_FOLDER_DIR,
     FILTERED_TM_FOLDER_DIR,
     FILTERED_TOKENIZED_BO_FOLDER_DIR,
@@ -20,9 +25,14 @@ from .config import (
     TEST_DIR,
 )
 from .file_utils import convert_tm_file_name_to_bo_file_name
+from .repo_file_downloader import (
+    download_bo_files_from_github_with_TM_file_names,
+    download_tm_files_from_github,
+)
 from .settings import GITHUB_TOKEN
 from .tibetan_sentence_tokenizer_pipeline import (
     remove_key_caps,
+    sentence_tokenize_and_save_in_folder,
     sentence_tokenizer_pipeline,
     transfer_non_tibetan_chars,
 )
@@ -37,14 +47,60 @@ token = GITHUB_TOKEN
 
 def pipeline():
 
+    # Downloading the TM files
+    tm_files = (
+        Path(DATA_FOLDER_DIR / "all_TMs_list.txt")
+        .read_text(encoding="utf-8")
+        .split("\n")
+    )
+    tm_files = [element for element in tm_files if element != ""]
+    download_tm_files_from_github(tm_files, ALL_TM_FOLDER_DIR)
+    # files with issues
+    files_with_issues, files_without_issues = identify_files_with_affix_issues(
+        ALL_TM_FOLDER_DIR, AFFIX_ISSUES
+    )
+    Path(DATA_FOLDER_DIR / "TM_files_with_issues.txt").write_text(
+        "\n".join(files_with_issues), encoding="utf-8"
+    )
+    Path(DATA_FOLDER_DIR / "TM_files_without_issues.txt").write_text(
+        "\n".join(files_without_issues), encoding="utf-8"
+    )
+
+    # Downloading the BO files where TM had problems
+    download_bo_files_from_github_with_TM_file_names(
+        files_with_issues, FILTERED_BO_FOLDER_DIR
+    )
+
+    # Copying the TM files with issues to filtered_TM_folder
+    files_with_issues_txt = [file_name + ".txt" for file_name in files_with_issues]
+    # Specify the source and destination directories
+    source_directory = ALL_TM_FOLDER_DIR
+    destination_directory = FILTERED_TM_FOLDER_DIR
+
+    # List of file names you want to copy
+    files_to_copy = files_with_issues_txt
+
+    # Loop through the list of file names and copy each file
+    for file_name in files_to_copy:
+        source_path = os.path.join(source_directory, file_name)
+        destination_path = os.path.join(destination_directory, file_name)
+
+        try:
+            shutil.copy2(source_path, destination_path)
+            print(f"Copied {file_name} to {destination_directory}")
+        except FileNotFoundError:
+            print(f"File {file_name} not found in {source_directory}")
+        except Exception as e:
+            print(f"Error copying {file_name}: {str(e)}")
+
     # Tokenizing the TM and BO files
     # Only TM files with issues and their corresponding BO files are tokenized
-    # sentence_tokenize_and_save_in_folder(
-    #     FILTERED_BO_FOLDER_DIR, FILTERED_TOKENIZED_BO_FOLDER_DIR
-    # )
-    # sentence_tokenize_and_save_in_folder(
-    #     FILTERED_TM_FOLDER_DIR, FILTERED_TOKENIZED_TM_FOLDER_DIR
-    # )
+    sentence_tokenize_and_save_in_folder(
+        FILTERED_BO_FOLDER_DIR, FILTERED_TOKENIZED_BO_FOLDER_DIR
+    )
+    sentence_tokenize_and_save_in_folder(
+        FILTERED_TM_FOLDER_DIR, FILTERED_TOKENIZED_TM_FOLDER_DIR
+    )
 
     # Cleaning the TM files
 
