@@ -5,14 +5,14 @@ from typing import List, Tuple
 
 from antx.core import get_diffs
 
-from .config import FILTERED_TM_FOLDER_DIR  # noqa
-from .config import (
+from affix_normaliser.config import FILTERED_TM_FOLDER_DIR  # noqa
+from affix_normaliser.config import (
     AFFIX_ISSUES,
     DATA_FOLDER_DIR,
     FILTERED_TOKENIZED_TM_FOLDER_DIR,
     FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR,
 )
-from .file_utils import count_files_in_folder
+from affix_normaliser.file_utils import count_files_in_folder
 
 ANTX_ERROR_LOG_FILE = "antx_annotation_transfer_error_log.txt"
 ANTX_LOG_FILE = "antx_annotation_transfer_log.txt"

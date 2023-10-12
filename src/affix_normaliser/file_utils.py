@@ -2,7 +2,11 @@ import shutil
 from pathlib import Path
 from typing import List
 
-from .config import ALL_TM_FOLDER_DIR, DATA_FOLDER_DIR, FILTERED_BO_FOLDER_DIR
+from affix_normaliser.config import (
+    ALL_TM_FOLDER_DIR,
+    DATA_FOLDER_DIR,
+    FILTERED_BO_FOLDER_DIR,
+)
 
 
 def filter_empty_elements_from_list(input_list: List[str]) -> List[str]:

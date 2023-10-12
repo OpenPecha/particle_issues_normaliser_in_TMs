@@ -3,13 +3,13 @@ from pathlib import Path
 
 from antx import transfer
 
-from .config import (
+from affix_normaliser.config import (
     FILTERED_TM_FOLDER_DIR,
     FILTERED_TOKENIZED_CLEANED_TM_FOLDER_DIR,
     FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR,
 )
-from .data_post_processor import adjust_tsek_position_with_whitespaces
-from .file_utils import count_files_in_folder
+from affix_normaliser.data_post_processor import adjust_tsek_position_with_whitespaces
+from affix_normaliser.file_utils import count_files_in_folder
 
 NON_TIBETAN_CHARS = r"([A-Za-z0-9.,;:(){}\[\]'`\"\\\-—?%*&^]+)"
 
