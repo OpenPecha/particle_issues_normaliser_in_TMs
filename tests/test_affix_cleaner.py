@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from src.affix_normaliser.affix_cleaner import learn_and_clean_affixes
+from affix_normaliser.affix_cleaner import learn_and_clean_affixes
 
 from .config import BO_FOLDER_DIR, TM_FOLDER_DIR
 

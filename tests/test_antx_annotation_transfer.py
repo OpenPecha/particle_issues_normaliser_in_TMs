@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from src.affix_normaliser.antx_annotation_transfer import antx_annotation_transfer
+from affix_normaliser.antx_annotation_transfer import antx_annotation_transfer
 
 from .config import TM_FOLDER_DIR
 
