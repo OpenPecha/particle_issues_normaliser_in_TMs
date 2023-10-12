@@ -6,8 +6,8 @@ from typing import List
 
 from github import Github
 
-from config import DATA_FOLDER_DIR, PARENT_DIR
-from settings import GITHUB_TOKEN
+from .config import DATA_FOLDER_DIR
+from .settings import GITHUB_TOKEN
 
 token = GITHUB_TOKEN
 
@@ -130,15 +130,15 @@ class GitHubRepoFilter:
 
 
 if __name__ == "__main__":
-    bo_repos_file_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "all_BO_EN_list.txt"
+    bo_repos_file_path = Path(DATA_FOLDER_DIR) / "all_BO_EN_list.txt"
     bo_names = filter_bo_repo_names_from_file(bo_repos_file_path)
     tm_names = get_tm_repo_names_from_bo_names(bo_names)
 
-    tm_file_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "all_TMs_list.txt"
+    tm_file_path = Path(DATA_FOLDER_DIR) / "all_TMs_list.txt"
     tm_file_path.write_text("\n".join(tm_names), encoding="utf-8")
 
-    filtered_TM_files_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "filtered_TMs.txt"
-    error_TM_files_path = Path(PARENT_DIR / DATA_FOLDER_DIR) / "filtered_error_TMs.txt"
+    filtered_TM_files_path = Path(DATA_FOLDER_DIR) / "filtered_TMs.txt"
+    error_TM_files_path = Path(DATA_FOLDER_DIR) / "filtered_error_TMs.txt"
     tm_names_filtered = filter_tm_files_by_initial_commit_date_range(
         tm_names, filtered_TM_files_path, error_TM_files_path
     )
