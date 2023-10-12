@@ -5,8 +5,8 @@ import requests
 from github import Github
 from retrying import retry
 
-from .config import DATA_FOLDER_DIR
-from .settings import GITHUB_TOKEN
+from affix_normaliser.config import DATA_FOLDER_DIR
+from affix_normaliser.settings import GITHUB_TOKEN
 
 TOKEN = GITHUB_TOKEN
 REPO_OWNER = "MonlamAI"

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from src.affix_normaliser.tibetan_sentence_tokenizer_pipeline import (
+from affix_normaliser.tibetan_sentence_tokenizer_pipeline import (
     sentence_tokenizer_pipeline,
 )
 

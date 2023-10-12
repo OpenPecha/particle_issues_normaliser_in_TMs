@@ -3,17 +3,17 @@ from pathlib import Path
 
 from op_mt_tools.tokenizers import bo_sent_tokenizer as sentence_tokenizer
 
-from .antx_annotation_transfer import (
+from affix_normaliser.antx_annotation_transfer import (
     NON_TIBETAN_CHARS,
     non_tibetan_chars_annotation_transfer,
 )
-from .config import (
+from affix_normaliser.config import (
     FILTERED_BO_FOLDER_DIR,
     FILTERED_TM_FOLDER_DIR,
     FILTERED_TOKENIZED_BO_FOLDER_DIR,
     FILTERED_TOKENIZED_TM_FOLDER_DIR,
 )
-from .file_utils import count_files_in_folder
+from affix_normaliser.file_utils import count_files_in_folder
 
 
 def remove_key_caps(input_string: str) -> str:

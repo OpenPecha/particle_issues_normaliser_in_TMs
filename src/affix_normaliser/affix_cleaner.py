@@ -4,13 +4,13 @@ from typing import List
 
 from antx.core import get_diffs
 
-from .config import (
+from affix_normaliser.config import (
     AFFIX_ISSUES,
     FILTERED_TOKENIZED_BO_FOLDER_DIR,
     FILTERED_TOKENIZED_CLEANED_TM_FOLDER_DIR,
     FILTERED_TOKENIZED_TM_FOLDER_DIR,
 )
-from .file_utils import (
+from affix_normaliser.file_utils import (
     count_files_in_folder,
     file_name_without_txt,
     remove_version_number_from_file_name,

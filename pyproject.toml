@@ -17,6 +17,12 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+dependencies = [
+   "antx >= 0.1.11",
+   "botok >= 0.8.12",
+   "PyGithub >= 1.59.1",
+]
+
 [project.optional-dependencies]
 dev = [
     "pytest",

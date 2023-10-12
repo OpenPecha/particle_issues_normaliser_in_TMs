@@ -1,8 +1,8 @@
 from pathlib import Path
 from typing import List, Tuple
 
-from .config import AFFIX_ISSUES, ALL_TM_FOLDER_DIR, DATA_FOLDER_DIR
-from .file_utils import count_files_in_folder, file_name_without_txt
+from affix_normaliser.config import AFFIX_ISSUES, ALL_TM_FOLDER_DIR, DATA_FOLDER_DIR
+from affix_normaliser.file_utils import count_files_in_folder, file_name_without_txt
 
 
 def check_affix_issues(

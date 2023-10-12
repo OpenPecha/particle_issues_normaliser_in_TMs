@@ -6,13 +6,16 @@ from typing import List
 
 from antx.core import get_diffs
 
-from .affix_checker import identify_files_with_affix_issues
-from .affix_cleaner import clean_affix_and_save_in_folder, learn_and_clean_affixes
-from .antx_annotation_transfer import (
+from affix_normaliser.affix_checker import identify_files_with_affix_issues
+from affix_normaliser.affix_cleaner import (
+    clean_affix_and_save_in_folder,
+    learn_and_clean_affixes,
+)
+from affix_normaliser.antx_annotation_transfer import (
     annotation_transfer_and_save_in_folder,
     antx_annotation_transfer,
 )
-from .config import (
+from affix_normaliser.config import (
     AFFIX_ISSUES,
     ALL_TM_FOLDER_DIR,
     DATA_FOLDER_DIR,
@@ -24,19 +27,19 @@ from .config import (
     FINAL_CLEANED_ANNOTATED_TM_FOLDER_DIR,
     TEST_DIR,
 )
-from .file_utils import convert_tm_file_name_to_bo_file_name
-from .repo_file_downloader import (
+from affix_normaliser.file_utils import convert_tm_file_name_to_bo_file_name
+from affix_normaliser.repo_file_downloader import (
     download_bo_files_from_github_with_TM_file_names,
     download_tm_files_from_github,
 )
-from .settings import GITHUB_TOKEN
-from .tibetan_sentence_tokenizer_pipeline import (
+from affix_normaliser.settings import GITHUB_TOKEN
+from affix_normaliser.tibetan_sentence_tokenizer_pipeline import (
     remove_key_caps,
     sentence_tokenize_and_save_in_folder,
     sentence_tokenizer_pipeline,
     transfer_non_tibetan_chars,
 )
-from .verify_antx_modification import (
+from affix_normaliser.verify_antx_modification import (
     count_affix_in_string,
     validate_extra_annotation_condition,
     validate_missing_annotation_condition,
@@ -208,4 +211,4 @@ def test_individual_file(file_name: str):
 
 
 if __name__ == "__main__":
-    test_individual_file("TM4707.txt")
+    pipeline()
