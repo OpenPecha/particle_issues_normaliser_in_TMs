@@ -208,4 +208,4 @@ def test_individual_file(file_name: str):
 
 
 if __name__ == "__main__":
-    test_individual_file("TM4707.txt")
+    pipeline()
